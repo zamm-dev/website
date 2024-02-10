@@ -4,6 +4,7 @@ const blog = defineCollection({
 	type: 'content',
 	// Type-check frontmatter using a schema
 	schema: z.object({
+		zammVersion: z.string(),
 		title: z.string(),
 		description: z.string(),
 		// Transform string to Date object

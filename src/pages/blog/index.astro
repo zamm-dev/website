@@ -52,6 +52,10 @@ const posts = (await getCollection('blog')).sort(
 			ul li a {
 				display: block;
 			}
+			ul li h4 .version {
+				font-size: 0.8em;
+				color: rgb(var(--gray));
+			}
 			.title {
 				margin: 0;
 				color: rgb(var(--black));
@@ -95,7 +99,10 @@ const posts = (await getCollection('blog')).sort(
 							<li>
 								<a href={`/blog/${post.slug}/`}>
 									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
+									<h4 class="title">
+										<span class="version">v{post.data.zammVersion}: </span>
+										{post.data.title}
+									</h4>
 									<p class="date">
 										<FormattedDate date={post.data.pubDate} />
 									</p>
