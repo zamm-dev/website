@@ -21,8 +21,56 @@ const { zammVersion: latestVersion } = latestPost.data;
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
+			@font-face {
+				font-family: 'Nasalization';
+				font-style: normal;
+				font-weight: 400;
+				src: url('/fonts/private/nasalization-rg.otf') format("opentype");
+			}
+
+			@font-face {
+				font-family: 'Nasalization';
+				font-style: normal;
+				font-weight: 700;
+				src: url('/fonts/private/nasalization-bd.otf') format("opentype");
+			}
+
+			@font-face {
+				font-family: 'Nasalization';
+				font-style: normal;
+				font-weight: 800;
+				src: url('/fonts/private/nasalization-hv.otf') format("opentype");
+			}
+
+			@font-face {
+				font-family: 'Good Timing';
+				font-style: italic;
+				font-weight: 400;
+				src: url('/fonts/private/good_timing_rg_it.otf') format("opentype");
+			}
+
+			@font-face {
+				font-family: 'Good Timing';
+				font-style: normal;
+				font-weight: 400;
+				src: url('/fonts/private/good_timing_rg.otf') format("opentype");
+			}
+
+			@font-face {
+				font-family: 'Good Timing';
+				font-style: normal;
+				font-weight: 700;
+				src: url('/fonts/private/good_timing_bd.otf') format("opentype");
+			}
+
 			h1 {
 				text-align: center;
+				font-family: 'Nasalization', sans-serif;
+			}
+
+			p {
+				text-align: center;
+				font-family: 'Good Timing', sans-serif;
 			}
 		</style>
 		<script>
