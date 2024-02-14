@@ -3,7 +3,367 @@ zammVersion: '0.1.0'
 title: 'Zen and the Automation of Metaprogramming for the Masses'
 description: 'ZAMM now has a GUI.'
 pubDate: 'February 14, 2024'
-heroImage: '/blog-placeholder-5.jpg'
+heroImage: '/posts/v0.1.0/dashboard.png'
 ---
 
 ZAMM now has a GUI.
+
+Please note that you'll have to sign up for ChatGPT's [Pay As You Go](https://lifehacker.com/openai-s-pay-as-you-go-is-the-best-way-to-use-chatgpt-1850318349) plan and make at least a [$1 payment](https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4) before OpenAI will let you access ChatGPT through this app.
+
+Performance can be [really poor](https://github.com/tauri-apps/tauri/issues/3988) on Linux, so you may want to turn off background animations there. The .deb package may offer better performance than the AppImage.
+
+Apologies for not having had the time to optimize this blog for mobile.
+
+***
+
+I am a bit proud of finally releasing my first ever project, but also a bit ashamed that after working on this since August of 2023, all I've managed to do is create yet another ChatGPT chat app -- and one that only *just* barely manages to let you do that, for that matter:
+
+- There's no persistence of conversations (the API calls are logged, but I haven't yet had time to actually create a conversation model in the database, execute the relevant SQL transactions in Rust, and display it all on Svelte)
+- There's no strategy to truncate the conversation once it approaches the maximum context length for the model
+- There's not even the functionality around editing files and running terminal commands that [v0.0.5](https://github.com/amosjyng/zamm/tree/v0.0.5) of ZAMM had, although the usability for that old commandline version was so horrendous that I don't think anybody (not even myself) actually used it
+
+How is it that a senior developer ends up spending approximately 350 hours of focused engineering time over 6 entire months on a project, and still end up with such a barebones app? For months, after the initial rush of starting a new project died down, part of me kept asking, "Why am I doing this?" It wanted reassurance that this was a wise and judicious usage of Amos's time, despite the fact that judging by past performance, Amos was most likely just going to end up spending his time scrolling the internet anyways. When I could not provide this reassurance, efforts would falter: I probably spent perhaps 10 hours of dedicated coding time on this project in all of December. I kept answering that question with, "Well, because I sure as hell don't see anyone else building the *exact* piece of software that I want to use, and I'm not rich enough to hire others to do that for me, so what choice do I have? If I want it, I'm going to have to build it myself."
+
+Six months later, that question has morphed into, "Why have I done this?" I still don't have the exact piece of software that I want to use. None of my practical motivations for working on this have panned out -- not because I tried to do them and they just didn't pan out because LLM technology isn't quite there yet, but because I never got to the point of being able to try them in the first place. Amos the Investor is looking for his ROI. Alas, it seemed as if it is nowhere to be found.
+
+I have instead come to better understand what I've made not as a cutting-edge AI tool (in which case it's a total failure that fails to push any boundaries at all), but as an artistic concept piece. It helps elucidate one question I've had for a long time: Why don't our scientific and programming tools look as cool as they do in [the movies](https://www.reddit.com/r/FUI/top/?t=all)? Now I know that whatever else the reason might be, it's certainly not because the UI would be too [impractical](https://news.ycombinator.com/item?id=29510873) or [complicated](https://www.reddit.com/r/NoStupidQuestions/comments/2ku1hj/why_arent_there_cool_futuristic_user_interfaces/) to use -- at least not at the small scales of functionality that ZAMM is currently at. Recent developments in AI have given me the sensation that we are now entering The Future of sci-fi past, and I've finally found an app that reflects how I feel on the inside. (It is a bit silly that I've only just discovered [Arwes](https://arwes.dev/) while writing this post, but I'm not sure if I would've used it anyways given the lack of documentation and seemingly discontinued development.)
+
+I could've gone slightly further in functionality if I had deprioritized looks from the get-go. But knowing myself, I felt that if I didn't build out the look I wanted from the start, I'll never get around to it once I get the ball rolling on functional features. Besides, my partner isn't a programmer, and if I'm going to dedicate something to her, it would be best for her to be able to directly appreciate it too.
+
+It started off small, with cut corners to reflect [sci-fi](https://scifi.stackexchange.com/questions/12335/why-does-the-paper-in-battlestar-galactica-have-the-corners-cut-off) themes. But these corners then had to be rounded to emulate the retrofuturistic vibe of the [Nasalization font](https://www.dafont.com/nasalization.font):
+
+![Rounded cut corners](/posts/v0.1.0/corners.png)
+
+It expanded from there to include the animations that I had heard Svelte was great for. The title text should enter one character at a time, but *not* overrun the width of the container that's simultaneously growing outside it. At the end of the title growth animation, the red block caret should rest for a moment before gradually fading out. Meanwhile, the height should start growing a short while *before* the width finishes growing, or else the two animations combined together won't look so fluid:
+
+<video autoplay loop muted width="100%">
+  <source src="/posts/v0.1.0/title-grow.mp4" type="video/mp4" />
+  This browser does not display the video tag.
+</video>
+
+Each element of the content should start its own individual reveal shortly after the container height has grown large enough to include it. Because the container height grows via `cubicInOut`, the content needs to invert the `cubicInOut` function to get the time at which the container height will go past its bottom y position:
+
+<video autoplay loop muted width="100%">
+  <source src="/posts/v0.1.0/content-reveal.mp4" type="video/mp4" />
+  This browser does not display the video tag.
+</video>
+
+Once I got that going in one part of the app, it felt out of place to not extend the same look and feel to other parts of the app. For example, upon form submission to set the OpenAI API key, the form should start closing. However, because we have cut corners, we need to add some extra margin around the form so that the corners of the form don't extend past the cut corners of the container during the animation. As such, the form itself should be animated to shrink to zero height, and *then* the margin around the form should shrink as well.
+
+Only once the form is fully closed do we change the status of the "Active" button and let it emit a faint glow. This wait helps establish a visual metaphor, as if the information cannot get processed until the drawer that contains it slides all the way back in.
+
+<video autoplay loop muted width="100%">
+  <source src="/posts/v0.1.0/api-keys.mp4" type="video/mp4" />
+  This browser does not display the video tag.
+</video>
+
+I had to turn off certain animations for end-to-end screenshot tests, and allow animations to be slowed down for [Storybook](https://storybook.js.org/) development. If I was going to implement them anyway, I might as well expose these options to the user, which meant creating settings infrastructure, which meant writing and parsing preferences files to/from disk, exposing a preferences API on the Rust backend, creating a settings page on the frontend (with custom toggles and sliders) that then saves the results of said API calls to Svelte stores, editing all animated components to read from those stores, and ensuring that those stores are set correctly in Storybook as well. It's not *hard*, it's just drudgery.
+
+And yes, I did implement a custom toggle to fit in with the theme, which meant animating it. Animating it to simply stop once it reaches the end didn't feel right, so I had it go past the end a little before bouncing back. It felt like an easy thing to add a click sound, so I did and it sounded satisfying in Storybook. But audio playback didn't work in-app due to a [webkit2gtk problem](https://github.com/tauri-apps/tauri/issues/3725). This is only one of many problems I've encountered with WebKit or webkit2gtk; it's easily the biggest gripe I have about using Tauri. Regardless, I was far enough down this path that I implemented audio playback in Rust instead as a workaround.
+
+Making it click-only didn't feel right either, so I added drag functionality, and of course it should be able to be dragged out past its boundaries to the same extent it reaches during a regular click animation. Because the regular click animation also features a click sound, the dragging should also emit a click sound at the exact moment the user drags it past the end. There are even more minutiae, but you get the gist of it:
+
+<video autoplay loop muted width="240px">
+  <source src="/posts/v0.1.0/toggle.mp4" type="video/mp4" />
+  This browser does not display the video tag.
+</video>
+
+No one thing ever takes up that much time, but day by day and week by week, they add up. I started realizing I needed to get it to do at least *something* other than look pretty and toggle its own settings, so I skipped animating components that are specific to the chat page. I haven't had time to really clean up the credits page that I quickly hacked together two days ago, either.
+
+I know that I am, if not a vaunted "10x developer," then most definitely at least a *competent* developer by American tech industry standards of the late 2010's/early 2020's. At work, my bottlenecks and blockers have never been the speed at which I code. Now, after stripping away all the design reviews, code reviews, UX reviews, sprint meetings, retrospective meetings, etc. etc. and etc., I've found that even when going at my maximum speed (bottlenecked by my morale and willingness to put time into the project), I can only go a surprisingly short distance. I trust that this is earnestly because the task is non-trivial enough given the project management decisions I made to:
+
+<ol>
+  <li>
+    Put in all the GUI minutiae I mentioned above
+  </li>
+  <li>
+    Build out test infrastructure that makes it sustainable for me to work on this project for the long term. Not a single pixel rendered on-screen, nor a single byte written to disk or sent over the wire, should change without me being notified of it. Near total discipline is enforced at the boundary between the app and the rest of the world, as well as the boundary between the Svelte frontend and the Rust backend. It is good for my morale to be reassured that so long as all tests are passing, I can have high confidence in the current state of the app. After all, when it comes to personal projects, morale is the only source of funding I have.
+
+    I should note that
+    1. This discipline has admittedly been breaking down a little to get a release out by the deadline. It is funny that I fall into the cliche trap of rushing to meet a deadline despite having had ample time to prepare for it.
+    2. The main exception to the usual discipline would be animations. If there exists a way to do snapshot testing of frontend animations, please let me know.
+  </li>
+  <li>
+    Document the coding efforts that went into the development process. I recorded my coding process in commits [`93c2ade`](https://github.com/zamm-dev/zamm/commit/93c2ade7614c379f3764221fc7f1ab6d82fba739) to [`f9dc2d4`](https://github.com/zamm-dev/zamm/commit/f9dc2d416403d2046a5156376c1a23ba377411f2) of the repo (now since moved to the [dev-notes](https://github.com/zamm-dev/dev-notes) repo) because if I am to automate my development workflow, I need to first observe what exactly it is that I am doing when I code. As a side effect of doing so, I continually rediscover that digital reality also has a [surprising amount of detail](http://johnsalvatier.org/blog/2017/reality-has-a-surprising-amount-of-detail). I'd always felt this, but now I finally have solid proof. Take for example me realizing that justified text didn't look great for some chat messages:
+    <ol style="list-style-type: lower-roman;">
+      <li>
+        It's of course a trivial one-line change that takes maybe 2 minutes tops to find the right file and edit it:
+        ```css
+        .message .text {
+          ...
+          text-align: left;
+        }
+        ```
+      </li>
+      <li>
+        Unfortunately, the text does shift left but the `<p>` elements stay at exactly the same width, causing the chat bubbles to appear as if they have heavy right padding. After confirming that `width: fit-content;` doesn't do the trick either, I do some Googling and find out that this is a [known problem](https://stackoverflow.com/a/73198785) that can't be solved with CSS alone.
+      </li>
+      <li>
+        So I implement the solution with `document.createRange`, adapted to my particular code base:
+        ```svelte
+        <script lang="ts">
+          import { onMount } from "svelte";
+          ...
+          let textElement: HTMLDivElement;
+
+          onMount(() => {
+            setTimeout(() => {
+              const range = document.createRange();
+              range.selectNodeContents(textElement);
+              const textRect = range.getBoundingClientRect();
+              textElement.style.width = `${textRect.width}px`;
+            }, 10);
+          });
+        </script>
+
+        ...
+        <div class="text" bind:this={textElement}>
+          <slot />
+        </div>
+        ...
+        ```
+      </li>
+      <li>
+        Now I find that the width is far too short because I have `box-sizing: border-box;` set on the chat message. I still don't want to deal with padding calculations when reasoning about the size of the entire chat message bubble, so instead I rename the original `text` to `text-container`, wrap my actual text around another div that I call `text`, bind to this div instead, and set the box-sizing on that to `content-box`:
+        ```svelte
+          ...
+          <div class="text-container">
+            <div class="text" bind:this={textElement}>
+              <slot />
+            </div>
+          </div>
+          ...
+
+          <style>
+            ...
+            .text-container {
+              ...
+              box-sizing: border-box;
+            }
+
+            .text {
+              box-sizing: content-box;
+            }
+            ...
+          </style>
+        ```
+      </li>
+      <li>
+        Ideally, I would use `requestAnimationFrame` as an opportunity to resize visual components before they are shown on-screen, to prevent screen flicker. Unfortunately, it appears that in this particular case, the wrong dimensions get returned to `getBoundingClientRect`, so I stick to `setTimeout` to allow the browser to fully render the layout before I ask it to resize things yet again. As such, if you look for it, you will notice a quick flicker on-screen when the chat message is first rendered. If there is a better solution to this problem, please let me know. In any case, I'm probably now at 30 minutes into what should've been a trivially quick thing.
+      </li>
+      <li>
+        Now the tests fail with
+
+        ```
+        TypeError: range.getBoundingClientRect is not a function
+        ```
+
+        because jsdom doesn't implement `range.getBoundingClientRect`. Fair enough, `jsdom` only simulates the DOM without doing any layout calculations, so it wouldn't know what the coordinates are. I'll just mock it:
+
+        ```ts
+        window.document.createRange = vi.fn(() => {
+            return {
+              selectNodeContents: vi.fn(),
+              getBoundingClientRect: vi.fn(() => {
+                return {
+                  width: 10,
+                  height: 10,
+                  top: 0,
+                  left: 0,
+                  right: 10,
+                  bottom: 10,
+                };
+              }),
+            };
+          });
+        });
+        ```
+      </li>
+      <li>
+        I successfully get a new error message:
+        ```
+        TypeError: Cannot read properties of null (reading 'style')
+         ❯ Timeout._onTimeout src/routes/chat/MessageUI.svelte:14:21
+             12|         range.selectNodeContents(textElement);
+             13|         const textRect = range.getBoundingClientRect();
+             14|         textElement.style.width = `${textRect.width}px`;
+               |                     ^
+             15|       }
+             16|     }, 10);
+         ❯ listOnTimeout node:internal/timers:573:17
+         ❯ processTimers node:internal/timers:514:7
+        ```
+        In the browser, the div element is assigned and non-null by the time the component is mounted and the `onMount` callback is triggered. Indeed, even the [official documentation](https://svelte.dev/docs/element-directives#bind-this) shows that you can assume elements to be bound by the time `onMount` is called.
+        
+        For whatever reason, this non-null assumption does not appear to hold for `jsdom`. I guard the code with a null check:
+        ```ts
+        let textElement: HTMLDivElement | null;
+
+        onMount(() => {
+          setTimeout(() => {
+            if (textElement) {
+              ...
+            }
+          }, ...);
+        });
+        ```
+      </li>
+      <li>
+        Now the tests pass, but the typechecker complains:
+        ```
+        Error: Type 'Mock<[], { new (): Range; prototype: Range; readonly START_TO_START: 0; readonly START_TO_END: 1; readonly END_TO_END: 2; readonly END_TO_START: 3; }>' is not assignable to type '() => Range'.
+          Type '{ new (): Range; prototype: Range; readonly START_TO_START: 0; readonly START_TO_END: 1; readonly END_TO_END: 2; readonly END_TO_START: 3; }' is missing the following properties from type 'Range': commonAncestorContainer, cloneContents, cloneRange, collapse, and 25 more.
+            }) as unknown as typeof IntersectionObserver;
+            window.document.createRange = vi.fn(() => {
+              return {
+        ```
+        I make do with a manual cast. There's a whole app to get to, and the benefits of doing this in a potentially more proper way seem minimal:
+        ```ts
+        window.document.createRange = vi.fn(() => {
+          ...
+        }) as unknown as Mock<[], Range>;
+        ```
+      </li>
+      <li>
+        Somehow, the code passes locally but not on CI, where I still get the `range.getBoundingClientRect is not a function` message. (For those unfamiliar with the terminology, [CI](https://en.wikipedia.org/wiki/Continuous_integration) often refers to automated tests and workflows that run on a remote computer before every change you make to the project. This checks that the changes you made don't ripple out in a way that breaks other parts of the project, and also ensures that your code works on a machine other than your own.)
+        
+        I spend some time trying to reproduce this locally, to no avail. After some more Googling, I find that there is an [alternative way](https://github.com/jsdom/jsdom/issues/3002#issuecomment-1118039915) to mock `getBoundingClientRect` in a more direct and type-safe manner, so I try implementing this to see if it helps:
+        ```ts
+          Range.prototype.getBoundingClientRect =  vi.fn(() => {
+            return {
+              x: 0,
+              y: 0,
+              width: 10,
+              height: 10,
+              top: 0,
+              left: 0,
+              right: 10,
+              bottom: 10,
+              toJSON: vi.fn(),
+            };
+          });
+        ```
+      </li>
+      <li>
+        It still fails on CI. Rather than continuing to try to resolve the differences between local and CI environments, it seems a best use of my time to simply make the code more robust by wrapping it in a try-catch. After all, a failure to resize the message chat bubble isn't catastrophic; it will just look ugly.
+        ```ts
+        onMount(() => {
+          setTimeout(() => {
+            if (textElement) {
+              try {
+                ...
+              } catch (err) {
+                console.warn("Cannot resize chat message bubble: ", err);
+              }
+            }
+          }, ...);
+        });
+        ```
+      </li>
+      <li>
+        The CI run fails one more time because the screenshot tests are now failing, so I update the gold screenshots with the new CI output. Not a single pixel rendered on-screen should change without me being made aware of it, and a *lot* of them have just changed all at once.
+
+        And that is how a task that was only estimated to take 2 minutes ended up taking most likely a little over an hour (not counting all the time waiting for CI runs to complete). This sort of thing happening over and over again is how an app that I can probably fully describe in under an hour takes me half a year to build.
+      </li>
+    </ol>
+    That's the kind of workflow -- from Googling for problems and applying answers from StackOverflow to my local context, to doing refactors that move code around just so I can cleanly insert new code -- that I desperately wish to automate away as much as possible. In no part of this process did I exercise what I consider to be any genuine creativity. Everything was a straightforward reaction to the immediate problem I observed. I want to be doing more of "making the text left-aligned instead of justified" and less of literally everything else.
+    
+    Until this gets automated away, I don't know if I'll feel like working on any other side projects because I'll just keep running into the same old boring problems that make up 90+% of programming work on large projects. Until this gets automated away, I'll still get the urge to try to automate it away myself.
+
+    (Also, I dream of a day where LLMs liberate us from being forced to choose which tech stack our software is built on, just as much as modern programming languages liberate us from being forced to choose which platform our code runs on. If/when that day comes, I will be ready to rewrite ZAMM in natural language form using the documentation I already have at hand.)
+  </li>
+</ol>
+
+It is humbling yet refreshing for me to truly know for once what would happen "if only I applied myself," instead of continually day-dreaming about where I'd be if it weren't for this or that. As someone who graduated at a young age from a master's program at one of the US's most prestigious universities for computer science, I'd implicitly gotten the cultural message that I was supposed to change the world by doing something that *truly* matters with my life. I don't know if anyone had ever explicitly told me that message as such; I mostly just remember being frequently lauded for being a child prodigy (which I secretly enjoyed even if I pretended to play humble), some friends here and there joking that I'll make it big one day, or even simply reading as a kid about all the smart historical figures that did something noteworthy enough to be recorded with glowing reviews in the history books. Growing up "smart," it felt like it was my destiny to reach for the stars, to produce a magnum opus that demands admiration and respect.
+
+I no longer feel the need to prove anything, whether to myself or to anyone else. In return for letting go of my destiny, I have gained a feeling of complete freedom to live my life. It reminds me of how I was as a preteen -- doing things just because they were *fun*, not because they were going to matter one day. They did matter, of course, but it didn't matter that they mattered. I'll still do what I reasonably can to help my family and friends, my community and the world around me; I just no longer feel obligated to be anyone but a whimsical jolly fella.
+
+And so, I'm naming this project *Zen and the Automation of Metaprogramming for the Masses* as a tribute to the 50th anniversary of the [original ZAMM](https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance):
+
+- *Zen*: because of the unhurried manner in which I can now pursue Quality as I perceive it, in this project and in other endeavors in life
+- *Automation*: because despite how it looks right now, the intended purpose of the app is to actually help me do all the things I don't wish to personally do
+- *Metaprogramming*: because of all the coding-related tasks I wish for it to automate beyond just writing code
+- *Masses*: because it is open-source, and because LLMs assist in the democratization of control over our computing experiences
+
+I don't know how far I'll end up actually taking this project, but I suspect that I won't be stopping in the immediate near future. After all, if it's overengineered, it's only because I built out the infrastructure for the app I dreamed of, not the app I have today. That being said, even if I stop right now, I will still have learned a lot from familiarizing myself with Tauri, Svelte animations, app bundling and code signing. I will still have ended up with a marker of my personal growth, where for the first time in my life, I am capable of delivering something entirely of my own accord.
+
+***
+
+My partner, Liza, and I have been living in Australia for the past year. Through this time, we've continually brushed up against the overwhelming need for official documentation that proves that we are who we say we are.
+
+#### Housing
+
+To apply for housing, we need to provide:
+
+1. Proof of identity, which sometimes required multiple forms of ID as the passport alone apparently doesn't always suffice
+2. Proof of funds, which often required multiple months of bank statements
+3. Proof of income, which normally requires multiple paystubs. I was living off of savings and rental income from my home in the US, and Liza is a student who gets support from her family, so we didn't fit neatly into the income box.
+4. Proof of address, for where we were currently living
+5. Landlord references from every place we've lived at for the last 2 years. I believe our poor landlords got spammed with every single application we sent.
+6. A [cover letter](https://www.realestate.com.au/advice/how-to-write-a-cover-letter-for-a-rental-application/) that introduces us, apparently including our hobbies. Fortunately, my favorite hobby happens to be paying rent in full and on time.
+
+While these requirements (apart from the cover letter) seemed reasonable enough to me coming from the US, they were a far cry from how you just needed a passport and a payment on the deposit to get an apartment in Cambodia, where Liza is from and where we were living the year before. We got rejected time after time, presumably because of our non-standard situation, and also because of the severe housing crisis hitting all of Australia. Literally 40 people (I counted all of them) would show up at some of the open houses. I suppose this is what happens when you have [vacancy rates](https://www.domain.com.au/research/vacancy-rates-october-2023-1245973/) of 0.9% in Melbourne, and Melbourne wasn't even the worst. Perth as a whole was at 0.3%, with [one suburb](https://www.nine.com.au/property/news/the-toughest-rental-market-right-now-in-australia-has-no-vacancies/7c109d37-bcfe-4e95-bc2c-fbc6b3b43cce) in particular hitting **0.0%**. It got so ridiculously bad in Perth that universities [pled with staff](https://www.abc.net.au/news/2023-02-04/university-accommodation-crisis-as-international-students-return/101912694) to offer up their own homes for incoming students.
+
+It wasn't until we finally [hired someone](https://www.yourhomehunter.com.au/) to put together our rental application in a way that Australian landlords would appreciate and trust, that we got approved on the first try. (I would highly recommend Wendy, by the way, if you find yourself in a similar situation as we did.)
+
+#### Employment
+
+The last time I was hired was in 2021 in the US. Back in those good old days, before I could even finish saying "Hi, I ex-", recruiters would be hounding me to interview for their company. Sure, I'd have my fair share of rejections, but every time I've applied for work since graduating back in 2015, I've always easily ended up with multiple [juicy offers](https://www.levels.fyi/) to pick from.
+
+Two years later and an ocean away, I found myself saying "Hi, I exist. I am looking for a job now. Umm... hello? <em>HELLO?</em>!" without even the tiniest nibble from a recruiter. I eventually finally land a phone screen with a large Australian company. The interviewer starts asking what feels to me like trivia questions that I could always just Google if I ever needed to, and then asks me how I would implement a logging microservice for a payment microservice, so to prevent the payment microservice from double charging customers in its attempts to resend failed transactions to an external payment gateway.
+
+I silently intuited that one way or another, you're going to have to ask the bank every time before you retry the request on your end. Being unfamiliar with how payment service APIs usually work, I said that if the bank allowed for some way to refer to transactions with our own ID -- or if not, perhaps if they gave us a transaction ID for a new transaction, we could store it on our end with our order data -- then we could ask the bank before every request whether or not that transaction ID has already been fulfilled, and only proceed if it hasn't. The interviewer asked for clarification on how this would prevent double transactions, and I replied that if the external API had such a feature, we can just ask them to check for us with the transaction ID we provided, right? My reasoning, which I didn't say because I assumed it would be a discussion, was that the source of truth here is ultimately always going to be that external bank, and there's no way to absolutely guarantee that your microservice doesn't fail right in between successfully sending a transaction request over and logging the success of that request.
+
+The interviewer paused, scoffed, and finally said, "Okay, I think we can end this phone screen early. Do you have any questions for us?" I followed through with the formalities, but I was incensed at the time. Even if I had just said the stupidest thing you've ever heard of in your whole life, why wouldn't you at least poke holes at the stupid solution I proposed? If I had completely misunderstood the question (what does any of this have to do with microservices?), why wouldn't you clarify what it was that you actually wanted? Why wouldn't you give me *anything* to defend myself with? The cherry on top, as I found out later from a friend, is that actual banks do in fact implement [idempotency keys](https://quickstream.westpac.com.au/docs/quickstreamapi/v1/#idempotent-requests) for exactly this purpose, so I was clearly on the right track despite knowing nothing about payment APIs.
+
+I have never been interviewed in that way in the US, so that was the first real culture shock to me. In the end, I got one more phone screen from another company, and one full round from a third company. There is clearly a mismatch in communication styles: I would repeatedly ask, "Does that sound reasonable to you?" after I suggest something to make sure I'm going down the right track, the Australian interviewers will politely nod and say "Sure," and then go on to recommend a rejection for me anyways. I learned nothing from these interviews, except for the one bit of feedback that one recruiter was able to tell me about how my answers on my past experience were too "surface-level." Why wouldn't you simply ask me what further details you wished to know? But fair enough, perhaps I should adopt a more [STAR approach](https://www.themuse.com/advice/star-interview-method) to interviews in the future.
+
+(I haven't been interviewing for US companies for a little while now, because it seems surprisingly few of them are actually okay with fully remote work in APAC timezones. As such, I don't know if American tech interview culture has changed much, or how I'd fare in American interviews today after all the layoffs I've heard about.)
+
+#### Visas
+
+I first thought of going for the [Skilled Independent visa (subclass 189)](https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189/points-tested). Since ["Developer Programmer"](https://www.abs.gov.au/ausstats/abs@.nsf/Product+Lookup/E7A170C39D4FDA99CA257B950013114B?opendocument) is listed on the [skilled occupations list](https://immi.homeaffairs.gov.au/visas/working-in-australia/skill-occupation-list#), I decided to try to get a skills assessment, which in turn [requires](https://www.acs.org.au/content/dam/acs/acs-skills/Application-Checklist.pdf):
+
+1. Proof of education, requiring PDFs of your diplomas and school transcripts
+2. Proof of identity, requiring at least 3 forms of ID (I submitted my passport, driver's license, and birth certificate)
+3. Proof of work, requiring for every relevant job you've worked:
+    1. Two separate pieces of payment evidence, for both the starting and ending years of your job, that prove it wasn't a fake job and you actually got paid for it. I've kept all my tax returns, so that was an easy first piece of evidence. But I've never kept my pay stubs, and my bank account statements only went back 7 years, which was fortunately *just* long enough to show that I got paid in December of 8 years ago for my first employer.
+    2. <div>
+          A signed letter from the employer themselves, written on official letterhead, testifying what dates you worked there, what position you held, what job duties you held there, etc. Because the [official sample letter](https://www.acs.org.au/content/dam/acs/acs-skills/Example%20Employment%20Reference.pdf) featured wording that was exactly the same as the [ANZSCO descriptions](https://www.abs.gov.au/ausstats/abs@.nsf/Product+Lookup/E7A170C39D4FDA99CA257B950013114B?opendocument) I linked above, I'd assumed that they were looking for that exact wording. It didn't help that I found [another source](https://expatriates.stackexchange.com/a/9830) with a different example letter that also followed the same wording.
+          
+          It turns out I had missed the one line from the [skills assessment guideline](https://www.acs.org.au/content/dam/acs/acs-skills/skills-assessment-guidelines-for-applicants.pdf) that says "References with duties copied directly from ANZSCO description document or from another reference will not be accepted." To be fair, that information was bolded. But in my defense, it was part of an entire bolded paragraph, in a PDF document that is 21 pages long. And seriously, why would you put up a sample document on your website that has precisely the *opposite* wording of what you want to see, when you went to the trouble of making fake details for everything else? Oh well, my bad.
+
+          The initial email I got said that it would about 8 to 10 weeks to process. It took them almost 4 months before they got back to me about the employer references, and then 7 more weeks after that for them to finally take another look at my application.
+        </div>
+I finally got my skills assessment granted, just to be told by the lawyer I'd hired for the partner visa that with the delays this had taken, it was unlikely that an invitation would come in time for me to apply for the partner visa. Furthermore, even though the [official government webpage](https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189/points-tested#Eligibility) says you need 65 points or more, in the lawyer's experience applicants usually need at least 90 points before they are invited to apply.
+
+Ooops. I suppose the sentence "you will be ranked against other intending applicants" should've tipped me off that I needed to do more research about how this ranking happens before I started on this whole process. While the [official website](https://immi.homeaffairs.gov.au/visas/working-in-australia/skillselect/invitation-rounds) doesn't appear to give any indications what the current points required for "Developer Programmer" invitations are, [other sites](https://visa-go.com/blog/2022/03/09/is-75-points-enough-for-189-visa/) do say that in general what I had was likely not good enough.
+
+Okay, so I try for a [Partner visa (subclass 100)](https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/partner-offshore/migrant-100) instead. Since my partner is an Australian citizen, I would have an opportunity to stay if we were able to show that we are a de facto couple who have been cohabiting for at least a year. I learned my lesson from dealing with the rental market and the skilled migration visa: I would hire [a lawyer](https://www.hannantew.com.au/) right away to deal with this application. (If you're looking for an immigration lawyer in Australia, I would highly recommend Jordan Tew as someone who's prompt and professional, yet kind and generous.)
+  
+This of course required far more proof than anything else I've dealt so far. Parts of the documentation we had to provide include:
+- Each of our international travel histories for the last 10 years, including dates we entered and left each country, the purpose of the visit, and the visa we used for the visit. (As someone who has traveled a lot in the last few years, this was painful.)
+- Every address we've lived at for the last 10 years, and the dates we stayed at them. For the addresses that we cohabited at, we needed to submit proof of cohabitation. Apparently our rental contracts (with both our names on them) and multiple months of bank statements showing that we paid rent money to our landlords and each other were not enough; we also needed evidence of packages delivered to our addresses in our names. (Surely anyone who bothers to go to the length of faking rental contracts and rental payments would also bother to fake package deliveries?)
+- Details on every member of our immediate families, including their date and place of birth, their citizenships (including the date and the method by which they obtained each citizenship), and whether they're married (and if they are, who their spouses are and what their wedding date was)
+- My entire employment history since *birth*. For periods of unemployment, I had to explain how I was supporting myself and what I did with my time. (From ages 0 to 6, I was living off of parental income and spent much of my time drooling on people.)
+- Screenshots of our private chats where we said "I love you" to each other
+- Multi-page essays on how our relationship developed, requiring:
+    - a timeline of our relationship history, starting from how we first met and then explaining all major events that developed afterwards
+    - details on how we emotionally support each other
+    - details on how we function as a couple: the public events at which we have presented ourselves at, the ways in which we split our household chores and other responsibilities, etc.
+  
+  After the lawyer drafts the essays up in a more legalese form, a person [officially licensed](https://www.ag.gov.au/legal-system/statutory-declarations/about-commonwealth-statutory-declarations/who-can-witness-commonwealth-statutory-declaration) by the state has to [witness](https://www.justice.vic.gov.au/statdecs) you signing each page of these essays and the attached evidence, and then witness you proclaiming the truth of all that you just signed.
+
+We were so caught up on the default path of continuing our stay in Australia that we forgot to stop and ask just how badly we actually want to stay in a country whose institutions are clearly not acting very enthusiastic about having us here. Ironically, it was only the act of finally completing the very last bit of the documentation for the partner visa that got us to finally ask this. I understand the impetus to do due diligence and ensure that your immigration system, companies, and landlords aren't being scammed. However, from the perspective of the ones being probed, it is a bit tiring to feel as if we have to justify our presence at every turn, to prove beyond a shadow of a doubt that we too deserve a spot at work, at home, and even just in the country itself.
+
+Don't get me wrong, Melbourne itself is a decent enough place to live in -- the people are nice and the city has all the regular first world amenities. I also realize that such gatekeeping is hardly a problem unique to Australia, and I recognize that Cambodia has its own set of institutional problems. Nonetheless, we have no cultural ties to Australia, and no strong incentives to stick it out here. If Australia isn't so sure it wants us here, perhaps it's best for us to just leave rather than pay another A$9,000 (~$6,000 USD) to file the visa application. And I'm sure from The Australian System's point of view, it would also prefer that those unwilling or unable to deal with The System simply self-select themselves out of existence.
+
+So, as my Work and Holiday visa expires this week, I want to express a token of my love for Liza that is far more genuine than anything the Australian government would have found in officially recognized legal documents. I want to divulge, in this remote corner of the web, witnessed only by some fiendishly informal friends and perhaps a handful of internet randos, something far more meaningful than a document signing overseen by officially sanctioned witnesses. I want to say on this Valentine's Day:
+
+I love you, **Eliza Lynn Kith**, and I wish to dedicate this concept piece to you. I hope that the look and feel of the app gives you joy in spite of its limited functionality and lack of polish. I greatly look forward to seeing where our life leads in Cambodia. Thank you for being mine. ❤️
+
+<div class="signature">
+Yours truly,
+
+Amos Jun-yeung Ng
+</div>
