@@ -42,14 +42,14 @@ It started off small, with cut corners to reflect [sci-fi](https://scifi.stackex
 
 It expanded from there to include the animations that I had heard Svelte was great for. The title text should enter one character at a time, but *not* overrun the width of the container that's simultaneously growing outside it. At the end of the title growth animation, the red block caret should rest for a moment before gradually fading out. Meanwhile, the height should start growing a short while *before* the width finishes growing, or else the two animations combined together won't look so fluid:
 
-<video autoplay loop muted width="100%">
+<video playsinline autoplay loop muted width="100%">
   <source src="/posts/v0.1.0/title-grow.mp4" type="video/mp4" />
   This browser does not display the video tag.
 </video>
 
 Each element of the content should start its own individual reveal shortly after the container height has grown large enough to include it. Because the container height grows via `cubicInOut`, the content needs to invert the `cubicInOut` function to get the time at which the container height will go past its bottom y position:
 
-<video autoplay loop muted width="100%">
+<video playsinline autoplay loop muted width="100%">
   <source src="/posts/v0.1.0/content-reveal.mp4" type="video/mp4" />
   This browser does not display the video tag.
 </video>
@@ -58,7 +58,7 @@ Once I got that going in one part of the app, it felt out of place to not extend
 
 Only once the form is fully closed do we change the status of the "Active" button and let it emit a faint glow. This wait helps establish a visual metaphor, as if the information cannot get processed until the drawer that contains it slides all the way back in.
 
-<video autoplay loop muted width="100%">
+<video playsinline autoplay loop muted width="100%">
   <source src="/posts/v0.1.0/api-keys.mp4" type="video/mp4" />
   This browser does not display the video tag.
 </video>
@@ -69,7 +69,7 @@ And yes, I did implement a custom toggle to fit in with the theme, which meant a
 
 Making it click-only didn't feel right either, so I added drag functionality, and of course it should be able to be dragged out past its boundaries to the same extent it reaches during a regular click animation. Because the regular click animation also features a click sound, the dragging should also emit a click sound at the exact moment the user drags it past the end. There are even more minutiae, but you get the gist of it:
 
-<video autoplay loop muted width="240px">
+<video playsinline autoplay loop muted width="240px">
   <source src="/posts/v0.1.0/toggle.mp4" type="video/mp4" />
   This browser does not display the video tag.
 </video>
