@@ -83,6 +83,10 @@ const { zammVersion: latestVersion } = latestPost.data;
 		<Header />
 		<main>
 			<h1>ZAMM</h1>
+			<video playsinline autoplay muted width="100%">
+				<source src="/demo.mp4" type="video/mp4" />
+				This browser does not display the video tag.
+			</video>
 			<p>This is an experimental and still incomplete AI chat tool.</p>
 			<p>Download <a href={`/blog/${versionSlug(latestPost)}`}>version {latestVersion}</a>.</p>
 		</main>
