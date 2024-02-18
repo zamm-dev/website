@@ -1,7 +1,5 @@
-import type { CollectionEntry } from 'astro:content';
+import type { BlogPost } from "../content/config";
 
-type BlogEntry = CollectionEntry<'blog'>;
-
-export default function (entry: BlogEntry) {
-  return `v${entry.data.zammVersion}`;
+export default function (post: BlogPost) {
+  return `v${post.zammVersion}`;
 }

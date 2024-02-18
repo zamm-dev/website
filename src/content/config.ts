@@ -1,17 +1,33 @@
 import { defineCollection, z } from 'astro:content';
 
+export const ReleaseLinksSchema = z.object({
+	page: z.string(),
+	linuxAppImage: z.string(),
+	linuxDeb: z.string(),
+	macDmg: z.string(),
+	windowsExe: z.string(),
+	windowsMsi: z.string(),
+});
+
+export type ReleaseLinks = z.infer<typeof ReleaseLinksSchema>;
+
+const BlogSchema = z.object({
+	zammVersion: z.string(),
+	title: z.string(),
+	description: z.string(),
+	releaseLinks: ReleaseLinksSchema,
+	// Transform string to Date object
+	pubDate: z.coerce.date(),
+	updatedDate: z.coerce.date().optional(),
+	heroImage: z.string().optional(),
+});
+
+export type BlogPost = z.infer<typeof BlogSchema>;
+
 const blog = defineCollection({
 	type: 'content',
 	// Type-check frontmatter using a schema
-	schema: z.object({
-		zammVersion: z.string(),
-		title: z.string(),
-		description: z.string(),
-		// Transform string to Date object
-		pubDate: z.coerce.date(),
-		updatedDate: z.coerce.date().optional(),
-		heroImage: z.string().optional(),
-	}),
+	schema: BlogSchema,
 });
 
 export const collections = { blog };

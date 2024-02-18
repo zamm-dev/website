@@ -2,9 +2,9 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ReleaseLinks from '../components/ReleaseLinks.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from "astro:content";
-import versionSlug from '../lib/versionSlug';
 
 const blogPosts = await getCollection("blog");
 // find latest blog post
@@ -13,7 +13,6 @@ const latestPost = blogPosts.sort((a, b) => {
 	const bVersion = b.data.zammVersion.split('.').map(Number);
 	return aVersion[0] - bVersion[0] || aVersion[1] - bVersion[1] || aVersion[2] - bVersion[2];
 })[0];
-const { zammVersion: latestVersion } = latestPost.data;
 ---
 
 <!doctype html>
@@ -88,7 +87,7 @@ const { zammVersion: latestVersion } = latestPost.data;
 				This browser does not display the video tag.
 			</video>
 			<p>This is an experimental and still incomplete AI chat tool.</p>
-			<p>Download <a href={`/blog/${versionSlug(latestPost)}`}>version {latestVersion}</a>.</p>
+			<ReleaseLinks release={latestPost.data} linkBlogPost />
 		</main>
 		<Footer />
 	</body>
