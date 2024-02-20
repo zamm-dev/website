@@ -12,6 +12,7 @@ type Props = BlogPost;
 const data = Astro.props;
 const { zammVersion, title, description, pubDate, updatedDate, heroImage } = data;
 const fullTitle = `v${zammVersion} - ${title}`;
+const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/content/blog/v${zammVersion}.mdx`;
 ---
 
 <html lang="en">
@@ -61,12 +62,20 @@ const fullTitle = `v${zammVersion} - ${title}`;
 				font-size: 0.8em;
 				color: rgb(var(--gray));
 			}
-			.date {
-				margin-bottom: 0.5em;
+			.dates {
+				margin: 0 auto 0.5em;
 				color: rgb(var(--gray));
+				width: fit-content;
 			}
-			.last-updated-on {
-				font-style: italic;
+			.dates td {
+				text-align: right;
+				padding: 0 0.25rem;
+			}
+			.dates td.date {
+				text-align: left;
+			}
+			.dates a {
+				color: rgb(var(--gray));
 			}
 		</style>
 	</head>
@@ -79,18 +88,21 @@ const fullTitle = `v${zammVersion} - ${title}`;
 					{heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
 				</div>
 				<div class="title">
-					<div class="date">
-						<FormattedDate date={pubDate} />
+					<h1><span class="version">v{zammVersion}: </span>{title}</h1>
+					<table class="dates">
+						<tr>
+							<td>Published</td>
+							<td class="date"><FormattedDate date={pubDate} /></td>
+						</tr>
 						{
 							updatedDate && (
-								<div class="last-updated-on">
-									Last updated on <FormattedDate date={updatedDate} />
-								</div>
+								<tr>
+									<td><a href={postHistoryUrl}>Last update</a></td>
+									<td class="date"><FormattedDate date={updatedDate} /></td>
+								</tr>
 							)
 						}
-					</div>
-					<h1><span class="version">v{zammVersion}: </span>{title}</h1>
-					<hr />
+					</table>
 				</div>
 				<div class="prose">
 					<ReleaseLinks release={data} />
