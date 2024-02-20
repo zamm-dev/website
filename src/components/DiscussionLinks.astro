@@ -1,0 +1,35 @@
+---
+import type { DiscussionLinks } from '../content/config';
+
+type Props = DiscussionLinks | undefined;
+
+const {
+  hackerNews: hackerNewsLink,
+} = Astro.props ?? {};
+
+---
+
+{hackerNewsLink &&
+  <div class="discussion-container">
+    <p>Discuss on <a href={hackerNewsLink}>HN</a></p>
+    <hr />
+  </div>
+}
+
+<style>
+  .discussion-container {
+    color: rgb(var(--gray));
+  }
+  
+  hr {
+    margin: 2rem 0 4rem;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: rgb(var(--gray));
+  }
+</style>

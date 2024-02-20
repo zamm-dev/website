@@ -11,11 +11,18 @@ export const ReleaseLinksSchema = z.object({
 
 export type ReleaseLinks = z.infer<typeof ReleaseLinksSchema>;
 
+export const DiscussionLinksSchema = z.object({
+	hackerNews: z.string().optional(),
+});
+
+export type DiscussionLinks = z.infer<typeof DiscussionLinksSchema>;
+
 const BlogSchema = z.object({
 	zammVersion: z.string(),
 	title: z.string(),
 	description: z.string(),
 	releaseLinks: ReleaseLinksSchema,
+	discussions: DiscussionLinksSchema.optional(),
 	// Transform string to Date object
 	pubDate: z.coerce.date(),
 	updatedDate: z.coerce.date().optional(),
