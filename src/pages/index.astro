@@ -11,7 +11,7 @@ const blogPosts = await getCollection("blog");
 const latestPost = blogPosts.sort((a, b) => {
 	const aVersion = a.data.zammVersion.split('.').map(Number);
 	const bVersion = b.data.zammVersion.split('.').map(Number);
-	return aVersion[0] - bVersion[0] || aVersion[1] - bVersion[1] || aVersion[2] - bVersion[2];
+	return bVersion[0] - aVersion[0] || bVersion[1] - aVersion[1] || bVersion[2] - aVersion[2];
 })[0];
 ---
 
