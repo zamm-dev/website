@@ -106,6 +106,10 @@ img {
 	margin: 0 auto;
 	display: block;
 }
+.prose img {
+	/* -20px because of the extra bottom margin from <p> elements */
+	margin-top: -20px;
+}
 code {
 	padding: 2px 5px;
 	background-color: rgb(var(--gray-light));
