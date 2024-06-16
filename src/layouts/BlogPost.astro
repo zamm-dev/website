@@ -37,11 +37,16 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 			}
 			.prose {
 				width: 720px;
-				max-width: calc(100% - 2em);
+				max-width: 100%;
 				margin: auto;
-				padding: 1em;
 				color: rgb(var(--gray-dark));
 				text-align: justify;
+			}
+			@media (min-width: 720px) {
+				.prose {
+					padding: 1em;
+					max-width: calc(100% - 2em);
+				}
 			}
 			.prose :global(.signature) {
 				margin-left: auto;
