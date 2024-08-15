@@ -29,8 +29,15 @@
 	font-style: normal;
 	font-display: swap;
 }
+@font-face {
+	font-family: 'Nokora';
+	src: url('/fonts/Nokora-Regular.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
 body {
-	font-family: 'Atkinson', sans-serif;
+	font-family: 'Atkinson', 'Nokora', sans-serif;
 	margin: 0;
 	padding: 0;
 	text-align: left;
@@ -41,6 +48,9 @@ body {
 	color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+}
+.khmer {
+	font-size: 1.1em;
 }
 main {
 	width: 720px;
@@ -57,6 +67,7 @@ h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--black));
 	line-height: 1.2;
+	text-align: left;
 }
 h1 {
 	font-size: 3.052em;
