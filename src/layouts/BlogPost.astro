@@ -43,6 +43,12 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 				color: rgb(var(--gray-dark));
 				text-align: justify;
 			}
+			.prose :global(li p:first-of-type) {
+				margin-top: 0.5em;
+			}
+			.prose :global(li p:last-of-type) {
+				margin-bottom: 0.5em;
+			}
 			@media (min-width: 720px) {
 				.prose {
 					padding: 1em;
