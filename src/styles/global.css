@@ -49,6 +49,49 @@ body {
 	font-size: 20px;
 	line-height: 1.7;
 }
+
+@font-face {
+	font-family: 'Nasalization';
+	font-style: normal;
+	font-weight: 400;
+	src: url('/fonts/private/nasalization-rg.otf') format("opentype");
+}
+
+@font-face {
+	font-family: 'Nasalization';
+	font-style: normal;
+	font-weight: 700;
+	src: url('/fonts/private/nasalization-bd.otf') format("opentype");
+}
+
+@font-face {
+	font-family: 'Nasalization';
+	font-style: normal;
+	font-weight: 800;
+	src: url('/fonts/private/nasalization-hv.otf') format("opentype");
+}
+
+@font-face {
+	font-family: 'Good Timing';
+	font-style: italic;
+	font-weight: 400;
+	src: url('/fonts/private/good_timing_rg_it.otf') format("opentype");
+}
+
+@font-face {
+	font-family: 'Good Timing';
+	font-style: normal;
+	font-weight: 400;
+	src: url('/fonts/private/good_timing_rg.otf') format("opentype");
+}
+
+@font-face {
+	font-family: 'Good Timing';
+	font-style: normal;
+	font-weight: 700;
+	src: url('/fonts/private/good_timing_bd.otf') format("opentype");
+}
+
 .khmer {
 	font-size: 1.1em;
 }
