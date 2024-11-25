@@ -2,20 +2,32 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
 import versionSlug from '../../lib/versionSlug';
 import BlogPost from '../../layouts/BlogPost.astro';
+import type { MarkdownHeading } from 'astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: versionSlug(post.data) },
-		props: post,
+	
+	return await Promise.all(posts.map(async (post) => {
+		const renderedData = await post.render();
+		return {
+			params: { slug: versionSlug(post.data) },
+			props: {
+				post,
+				headings: renderedData.headings,
+			},
+		};
 	}));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
+type Props = {
+  post: CollectionEntry<'blog'>;
+  headings: MarkdownHeading[];
+};
+
+const { post, headings } = Astro.props;
 const { Content } = await post.render();
 ---
 
-<BlogPost {...post.data}>
+<BlogPost {...post.data} headings={headings}>
 	<Content />
 </BlogPost>

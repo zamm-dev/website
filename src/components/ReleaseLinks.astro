@@ -1,15 +1,18 @@
 ---
+import type { MarkdownHeading } from 'astro';
 import type { BlogPost } from '../content/config';
 import versionSlug from '../lib/versionSlug';
 
 
 type Props = {
   release: BlogPost;
+  headings: MarkdownHeading[];
   linkBlogPost?: boolean;
 };
 
 const {
   release,
+  headings,
   linkBlogPost,
 } = Astro.props;
 
@@ -30,7 +33,23 @@ const blogPostLink = `/blog/${versionSlug(release)}`;
 ---
 
 <div class="release-container">
-  Download <a href={releasePageLink}>v{releaseVersion}</a> {linkBlogPost &&
+  {headings &&
+    <nav>
+      This is a blog post about the release of ZAMM version {releaseVersion}, as well as other topics of interest to me. Feel free to jump directly to a given topic:
+      <ul>
+        {
+          headings.map((heading) => (
+            <li>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <hr />
+  }
+
+  Download <a href={releasePageLink}>ZAMM v{releaseVersion}</a> {linkBlogPost &&
     <span>
       &ndash; <a href={blogPostLink}>{blogPostTitle}</a>
     </span>
@@ -38,13 +57,13 @@ const blogPostLink = `/blog/${versionSlug(release)}`;
 
   <ul>
     <li>
-      Windows: <a href={windowsExeLink} download>exe</a> | <a href={windowsMsiLink} download>msi</a>
+      Windows: <a href={windowsExeLink} download>exe</a> / <a href={windowsMsiLink} download>msi</a>
     </li>
     <li>
       Mac: <a href={macDmgLink} download>dmg</a>
     </li>
     <li>
-      Linux: <a href={linuxAppImageLink} download>AppImage</a> | <a href={linuxDebLink} download>deb</a>
+      Linux: <a href={linuxAppImageLink} download>AppImage</a> / <a href={linuxDebLink} download>deb</a>
     </li>
   </ul>
 </div>
@@ -57,7 +76,18 @@ const blogPostLink = `/blog/${versionSlug(release)}`;
     border-radius: 1rem;
   }
 
+  hr {
+    border-top: 1px dashed rgb(173, 185, 230);
+    margin: 1rem;
+  }
+
   ul {
     margin: 0;
+  }
+
+  nav ul {
+    list-style-type: none;
+    padding-left: 1rem;
+    margin-top: 0.5rem;
   }
 </style>
