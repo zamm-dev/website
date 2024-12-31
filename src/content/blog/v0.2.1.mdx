@@ -1,0 +1,323 @@
+---
+zammVersion: '0.2.1'
+title: 'Anatomy of a debugging experience'
+description: 'An example of how it feels to debug something'
+pubDate: 'December 31, 2024'
+heroImage: '/posts/v0.2.1/terminal-sessions-list.png'
+releaseLinks:
+  page: https://github.com/zamm-dev/zamm/releases/tag/v0.2.1
+  windowsExe: https://github.com/zamm-dev/zamm/releases/download/v0.2.1/zamm_0.2.1_x64-setup.exe
+  windowsMsi: https://github.com/zamm-dev/zamm/releases/download/v0.2.1/zamm_0.2.1_x64_en-US.msi
+  macDmg: https://github.com/zamm-dev/zamm/releases/download/v0.2.1/zamm_0.2.1_universal.dmg
+  linuxAppImage: https://github.com/zamm-dev/zamm/releases/download/v0.2.1/zamm_0.2.1_amd64.AppImage
+  linuxDeb: https://github.com/zamm-dev/zamm/releases/download/v0.2.1/zamm_0.2.1_amd64.deb
+---
+
+## Release notes
+
+ZAMM can now display a list of all previous terminal sessions. It can also successfully export and import terminal sessions, and handles enough Windows escape codes to properly render the output of `cmd` and `dir`:
+
+![Running cmd dir on Windows](/posts/v0.2.1/cmd-dir.png)
+
+Behind the scenes, I am pre-emptively avoiding [bit rot](/blog/v0.1.1/) by migrating ZAMM from version 1 of Tauri to [version 2](https://v2.tauri.app/start/migrate/from-tauri-1/). I don't know why for sure, but this migration was way more fun than regular programming on ZAMM. I suspect it's because the migration involves short cycles of positive reinforcement. There may be 90 test or compilation errors across 15 different files, but most of them are easy to fix, and every time one is fixed, I get to watch the number go down as a reward. Errors that are fixed will almost always stay fixed, so the number goes down monotonically (that is, it never reverses direction). The next dopamine hit is never too far away, and the entire distance to the finish line is clearly marked.
+
+Feature development on the other hand feels quite different. Features can take multiple days to implement, and when they are done, the only reward is only an abstract sense of "Now this thing happens, which didn't happen before." There's no objective number that goes up as a marker of progress, no tests flipping from a red cross <span style="color: red;">✗</span> to a green checkmark <span style="color: green;">✔︎</span> except for the new ones that I introduced myself. There's no clear sense of how many files I need to edit before a feature is done, and sometimes I end up threading my yarn through the same file again and again, so I don't get that same sense of monotonically increasing progress. And while the finish line is still tantalizingly visible, there are no clear markings for how many more [fractally complex details](/blog/v0.1.0/) you need to add to get the feature to work the way you imagine it working.
+
+I am also in the process of migrating from Svelte 4 to [Svelte 5](https://svelte.dev/docs/svelte/v5-migration-guide), and that has proven decidedly less smooth than the Tauri migration. Part of this is because I've also had to migrate Storybook to version 8, and Vitest to version 2. While this migration is decidedly more annoying than the Tauri one, the positive reinforcement loop is still short enough for it to be deeply engrossing at times. Moreover, it has also made me realize that sometimes, it is the most annoying, nonsensical bugs that get me the most hooked on hunting them down. It's a "Can't Stop, Won't Stop" coding experience that drives me crazy that I also apparently cannot get enough of.
+
+I think this is because of the cognitive dissonance of having a crystal clear mental model that makes complete sense in your head, and yet when you meet with Reality, it simply shakes its head without elaborating any further. But how could you be wrong? *It just doesn't make sense.* To simply leave it be feels as wrong as actively engaging in doublethink, as if you've just made a truly compelling argument for why something is true, but then you shrug and nonchalantly conclude that it's actually false anyway. That's insanity. So you dig and dig, until you unearth a more accurate mental model of how something really works. Or perhaps instead your mental model was correct after all, but you unearth some logical consequences of this model that you'd failed to think through completely. One way or the other, you eventually resolve your conflict with Reality so that things make sense to you *and* Reality nods, and the cognitive dissonance finally comes to an end.
+
+Often, it turns out you were right after all in what you meant to do, in the overall strategy of how you had set out to accomplish your goal. But Reality is even more unerring in its nitpicky, almost autistic attention to all the minor details. If coding is crafting a narrative for the story you want to tell, weaving together an arc that takes your characters to the places they need to be and develops them into the people they need to be, then debugging is collaborating with Reality to make the story believable and free of obvious plot holes.
+
+## Anatomy of a debugging experience
+
+I've never seen anyone describe the subjective debugging experience quite as well as Pirsig in [the original ZAMM](https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance), so I'll just quote him here:
+
+> [T]hat part of formal scientific method called experimentation, is sometimes thought of by romantics as all of science itself because that's the only part with much visual surface. They see lots of test tubes and bizarre equipment and people running around making discoveries. They do not see the experiment as part of a larger intellectual process and so they often confuse experiments with demonstrations, which look the same. A man conducting a gee-whiz science show with fifty thousand dollars' worth of Frankenstein equipment is not doing anything scientific if he knows beforehand what the results of his efforts are going to be. A motorcycle mechanic, on the other hand, who honks the horn to see if the battery works is informally conducting a true scientific experiment. He is testing a hypothesis by putting the question to nature...
+>
+> Skill at this point consists of using experiments that test only the hypothesis in question, nothing less, nothing more. If the horn honks, and the mechanic concludes that the whole electrical system is working, he is in deep trouble. He has reached an illogical conclusion. The honking horn only tells him that the battery and horn are working. To design an experiment properly he has to think very rigidly in terms of what directly causes what. This you know from the hierarchy. The horn doesn't make the cycle go. Neither does the battery, except in a very indirect way. The point at which the electrical system directly causes the engine to fire is at the spark plugs, and if you don't test here, at the output of the electrical system, you will never really know whether the failure is electrical or not...
+>
+> In the final category, conclusions, skill comes in stating no more than the experiment has proved. It hasn't proved that when he fixes the electrical system the motorcycle will start. There may be other things wrong. But he does know that the motorcycle isn't going to run until the electrical system is working and he sets up the next formal question: "Solve problem: what is wrong with the electrical system?"
+>
+> He then sets up hypotheses for these and tests them. By asking the right questions and choosing the right tests and drawing the right conclusions the mechanic works his way down the echelons of the motorcycle hierarchy until he has found the exact specific cause or causes of the engine failure, and then he changes them so that they no longer cause the failure.
+>
+> An untrained observer will see only physical labor and often get the idea that physical labor is mainly what the mechanic does. Actually the physical labor is the smallest and easiest part of what the mechanic does. By far the greatest part of his work is careful observation and precise thinking. That is why mechanics sometimes seem so taciturn and withdrawn when performing tests. They don't like it when you talk to them because they are concentrating on mental images, hierarchies, and not really looking at you or the physical motorcycle at all. They are using the experiment as part of a program to expand their hierarchy of knowledge of the faulty motorcycle and compare it to the correct hierarchy in their mind. They are looking at underlying form.
+
+I may have never seen Pirsig code, but I think he would've been a good software engineer if he grew up in the era of modern programming. You can just tell from the way some people speak and think that they have exactly the sort of thought patterns that are conducive to being a good software engineer. As it was, it seems that Pirsig put his skills to good use in writing technical documentation for Honeywell.
+
+In any case, if you want an example of software debugging, check out this bug I encountered during the upgrade to Svelte 5. When you delete everything in the text field, the text field resets to its original state!
+
+<video playsinline autoplay loop muted width="100%" max>
+  <source src="/posts/v0.2.1/buggy-input.mp4" type="video/mp4" />
+  This browser does not display the video tag.
+</video>
+
+Of course, I didn't know this at first. All I knew was that an automated test was failing. The test in question was designed to verify that I could successfully edit a pre-filled export field, and it goes like this:
+
+1. Start out with a text field pre-filled with `/home/rando/.bashrc`
+2. Clear the text field using [`userEvent.clear`](https://testing-library.com/docs/user-event/utility#clear)
+2. Type in `folder/.bashrc`
+3. Hit the "Submit" button
+4. Check that an API call was triggered with an export value of `folder/.bashrc`
+
+This test was failing because the API call was made with the value of `/home/rando/.bashrcfolder/.bashrc` instead. Somehow, the second string was simply concatenated onto the first. I tried checking that the text field is actually empty after the test clears it:
+
+```ts
+    await userEvent.clear(fileInput);
+    expect(fileInput).toHaveValue("");
+```
+
+To my surprise, the text field was actually non-empty. Could it be that the `user-event.clear` function in Testing Library isn't working anymore? ("Testing Library" is a rather generic name, but it appears you can do well with a completely generic name if your software is good enough.) This did appear to be the case because I saw that there are [others](https://github.com/testing-library/user-event/discussions/970) with this apparent problem, who solve it by simply requesting the field to be cleared twice. This didn't work for me, unfortunately -- or perhaps fortunately, because if it did my investigation would've just ended here.
+
+Next, I tried testing this in the browser. Selecting the existing text and pasting a new value in works, so was this simply an artifact of my testing environmenet rather than a problem that exists in reality? In retrospect, the bug did not reproduce in the browser because if I select all the text and then paste a new value in, the text field is never empty and therefore never resets. But I didn't know that at the time, and so instead when I noticed the warnings
+
+```
+[svelte] ownership_invalid_mutation
+src/routes/components/api-keys/Form.svelte mutated a value owned by src/routes/components/api-keys/Service.svelte. This is strongly discouraged. Consider passing values to child components with `bind:`, or use a callback instead
+
+[svelte] ownership_invalid_mutation
+Mutating a value outside the component that created it is strongly discouraged. Consider passing values to child components with `bind:`, or use a callback instead
+```
+
+the idea of a test environment fluke seemed even more plausible, because said warnings did not seem to actually apply to my code.
+
+Yet upon further research, this turned out to be nothing more than an [HMR artifact](https://github.com/sveltejs/svelte/issues/10649#issuecomment-2189162706), as the warning went away after a hard refresh of the Storybook page. Sometimes that happens, where the errors and warnings that come your way are just false positives and red herrings, artifacts of the incomplete simulation of reality even in an environment where we can theoretically control all the bits.
+
+So it appeared that this test wasn't reacting to me clearing the text input field, but it *was* reacting to me typing in new text like `folder/.bashrc`. Okay, what if I tried typing in a single backspace and checking the output? Sure enough, it came out as `/home/rando/.bashr` -- the initial value minus the last character! Very well then, if that's what it takes, I'll simply backspace my way through the entire original string.
+
+But when I did just that, all of a sudden the behavior reverts to its original form: a concatenation of both strings with nothing deleted. *What?* Maddening. I start logging the result after every backspace:
+
+```
+/home/rando/.bashr
+/home/rando/.bash
+/home/rando/.bas
+/home/rando/.ba
+/home/rando/.b
+/home/rando/.
+/home/rando/
+/home/rando
+/home/rand
+/home/ran
+/home/ra
+/home/r
+/home/
+/home
+/hom
+/ho
+/h
+/
+/home/rando/.bashrc
+```
+
+Ahh, the pattern is finally clear! Somehow the string string gets reset to its original form at the very end. But why? Could it be something to do with Svelte's bindings -- that is, the way the text field's input value is tied to the value of the variable I use to make the API call? But that wouldn't explain why the binding works up until the very last bit.
+
+I scan through a few files and notice this function in the parent component:
+
+```ts
+  function updateFormFields(trigger: boolean) {
+    if (!trigger) {
+      return;
+    }
+
+    ...
+    if (formFields.saveKeyLocation === "") {
+      formFields.saveKeyLocation = $systemInfo?.shell_init_file ?? "";
+    }
+  }
+```
+
+If the file path is empty, then set it to `$systemInfo?.shell_init_file` if that exists; otherwise, just leave it empty. I do this check because if the form field *weren't* empty, then it probably means the user has edited it, and when the user closes and reopens the same form again, their edits should be preserved rather than reset.
+
+Back in Svelte 4, I had triggered a call to `updateFormFields` whenever the `editing` variable was toggled (in other words, whenever the user opened or closed the form):
+
+```ts
+  $: updateFormFields(editing);
+```
+
+Now in Svelte 5, the migration script had automatically changed the call to:
+
+```ts
+  run(() => {
+    updateFormFields(editing);
+  });
+```
+
+Why is it now triggering outside of changes to the `editing` variable? Is Svelte looking inside `updateFormFields` and taking stock of all variable values in there? That would be quite silly.
+
+In any case, it doesn't even matter, because what I'm really doing here is form initialization, and if that's what I'm doing, then there are much better, more explicit ways of doing form initialization than implicitly relying on reactivity. For example, this feels like an improvement:
+
+```ts
+  function toggleEditing() {
+    ...
+    if (editing) {
+      initializeFormFields();
+    }
+  }
+
+  ...
+
+  function initializeFormFields() {
+    ...
+    if (formFields.saveKeyLocation === "") {
+      ...
+    }
+  }
+```
+
+There's no more `trigger` argument, no more reactivity, and therefore no more needing to reason about when `initializeFormFields` gets triggered through reactivity -- it simply gets triggered at the same time as `toggleEditing`. This is the sort of thing that would ideally be caught in code review if I were working on this at a company. Somebody would tell me, "Hey, isn't this a simpler way of doing the same thing?" And I'd say, "D'oh! How did I not see that?" Even now, I realize that an even simpler solution would be to introduce a boolean that keeps track of whether or not we're initializing the form for the first time, so that there wouldn't need to be any if-statements in `initializeFormFields` itself:
+
+```ts
+  let formInitialized = false;
+
+  ...
+
+  function toggleEditing() {
+    ...
+    if (editing && !formInitialized) {
+      initializeFormFields();
+    }
+  }
+
+  ...
+
+  function initializeFormFields() {
+    ... // no more if-statements
+    
+    formInitialized = true;
+  }
+```
+
+What can I say? Whether you're coding or writing, first drafts can be quite messy. But this is also the sort of judgment call that I think should best be left up to humans rather than LLMs, at least for now. To me, this is where the creativity of programming comes in; this is where you recognize that it's better to go with an elegant solution than to brute force your way through debugging an ugly buggy solution.
+
+There are still a number of unexplained mysteries here. Why did the `run` function, which [should](https://svelte.dev/docs/svelte/svelte-legacy#run) act like `$effect.pre`, get triggered instead at that particular point in time? I have no idea; maybe one day I'll naturally find out as I get more familiar with Svelte 5. Or why did this test failure also cause the next test in the same file to fail? That would point to a problem with resetting the tests, perhaps in `beforeEach` or `afterEach` -- but I'm rendering a fresh copy of the parent component every time, and the variable in question is completely local to the parent component, so that shouldn't be the case. I don't know what the actual case is, and I don't care, because it's something that only happens in the test environment, only for this one particular file, and only when tests are failing. There are a lot of unsolved mysteries in the universe, but not all unsolved mysteries are equally meaningful.
+
+I want to point out here that my original logic, as ugly as it was, had worked fine under Svelte 4. It rested on a foundation of implicit assumptions about how Svelte works, and yet this foundation was stable for so long as I was using Svelte 4. Once I upgraded to Svelte 5, using a migration script whose authors made different assumptions than mine, the foundation shifted in ever so slightly different ways from under me and invalidated some of these implicit assumptions. This sort of phenomenon gives rise to [Hyrum's Law](https://www.hyrumslaw.com):
+
+> With a sufficient number of users of an API, it does not matter what you promise in the contract: all observable behaviors of your system will be depended on by somebody.
+
+In other words: if you're building a foundation for others to use, it doesn't matter what instructions you give them on how to use your foundation. They're simply going to build their structures, and so long as their structures don't collapse, they're going to assume that everything's fine. Neither of you are going to realize you've slightly misunderstood each other's assumptions, until their whole edifice comes crashing down once you change out the foundation from under them.
+
+While this is why migrations can be a bit annoying, I also appreciate that it offers me a chance to think more clearly and clarify what I wish for the code to do. I had previously thought of [bit rot](/blog/v0.1.1/) only as decay, and I had learned to not mind the analogous gardening quite as much. But now I see that repotting actually brings with it opportunities for the software organism to better state its needs to its dependencies.
+
+## The future of ZAMM
+
+This is perhaps the first bug in ZAMM that was unambiguously caught by automated testing, that I would not have discovered otherwise for quite a while. I never use that part of the app after initial setup, and even then it would've been unlikely for me to try to completely clear the file path first instead of simply editing the existing one or pasting a new one in.
+
+All in all, I don't know if that actually says anything positive about my obsession with testing. This has been the only unambiguously clear-cut win for testing over the last year of development on ZAMM, and it turned out to be a rather inconsequential win. There was also at some point a UI screenshot test that failed because I changed the CSS in one component and ended up inadvertently affecting the layout for some another component, but that one would've been caught sooner or later anyways, and the vast majority of screenshot test failures are expected changes to the screenshots in the CI environment. (Font rendering, among other minor things, is slightly different in every environment I run the tests in, so I can't just update the screenshots directly during development.) It would've been more practical to simply have never known about bugs like these, and instead redirect the time spent writing and debugging their respective tests towards having ZAMM actually do the things I want it to do. I don't mean to make this an extreme dichotomy where the other option is to get rid of tests entirely; that would clearly be impractical for long-term project development. I mean testing only the important things so that the project can move forward faster to actually meet its stated goals.
+
+But that requires a level of comfort with uncertainty that I currently do not have, and this is a personal project self-funded entirely by personal morale. In lieu of a juicy paycheck that keeps me coming to the office no matter how much of a piece of shit the product is, I currently rely on a sense of pleasure at the state of the app and the codebase, and the tests catching an error as inconsequential as this is a great confidence booster for the state of more major pieces of functionality. This is akin to how non-profits will dedicate resources to securing future funding instead of focusing purely on their mission statement. After all, the non-profit scaling back or even shutting down due to lack of funding would be pretty bad for its mission statement. (The less charitable take is that humans in positions of power are primed to want more power, and given [Pournelle's Iron Law of Bureaucracy](https://www.jerrypournelle.com/reports/jerryp/iron.html), the charity is going to prioritize its own growth over the execution of its mission statement. One could argue the UN has fallen for this as well, as I've now met two UN employees who are quite cynical about management's obsession with their own personal political power games.)
+
+This sense of pleasure is especially clear to me when looking at animations, which are the main aspect of the app that I can't really test in an automated fashion and which I therefore lack the same sense of certainty and control over. For this migration, I had to manually check all the transition effects I could think of checking -- and boy were many of them broken! In fact, because I was also taking the opportunity to simplify my mock Storybook layouts, these animations would occasionally be re-broken, and I wouldn't even know until I manually tested them again. I hate this feeling of taking one step forward here and one step backwards in another random place, because as I mentioned with debugging earlier, a sense of monotonically increasing progress is a great boost to my personal morale. Fortunately the number of animations to test are rather limited because I started focusing on features and functionality after v0.1.0, and this sort of uncertainty is also limited to this particular part of the app.
+
+And so, I've come to accept that at the current pace, with the current way I'm doing things due to my current coding personality, it's going to take years before ZAMM is functional in the way I want it to be. Which means it's going to be years before ZAMM matters, which means that ZAMM is basically *never* going to matter because I can't imagine a field as dynamic as this one not eventually churning out the product I want to use.
+
+I'm of two opinions about this. One is that the intrinsic motivation for working on ZAMM is always going to be there for so long as it or a proper substitute does not exist. Suppose I were to accept that I should just give up and leave the implementation of this idea up to somebody else. But let's say it's going to be three years before somebody else executes the vision I have in the way that I like. What would I want to do with my life in the intervening three years while I wait for that other thing to come online? Well, there's still a lot of projects I would like to work on, and so I would like to at least have a poor man's version of that other thing available for use on these other projects. Have something unprofessional, something that just barely works, to tide over the time before a proper solution arrives on the scene. But what would this new project be, but simply ZAMM under a different name?
+
+I should therefore go for broke in a completely new rewrite. To take a space analogy, if you launch a probe into space at low velocity, it's going to soar into the sky and possibly even into space before Earth's continual gravituational pull slows its ascent to a standstill and then tugs it all the way back down onto the ground. If you launch a space probe fast enough and at the right angle, it can perhaps move fast enough to avoid crashing back down, but still be too slow to completely escape the Earth's clutches either -- which is also known as "orbiting" the Earth. Sometimes, this is exactly what you want, to just send a satellite into space that continually hangs around in the Earth's vicinity. But if you launch a space probe *really* fast, faster than even its "[escape velocity](https://en.wikipedia.org/wiki/Escape_velocity)," it can leave the gravitational influence of the Earth forever.
+
+So then, I'm thinking that it may be worth trying once again to start this project from scratch, fly as fast as possible for a month or so with the latest and greatest AI coding tools, ignore tests or code quality or any other forms of long-term project sustainability as much as practical, and see whether I manage to make it to orbit before any of that matters, before the gravitational pull of geometrically increasing complexity slows project progress down to a crawl. Perhaps my personal distaste for a low-quality, low-confidence codebase can be offset by the continual dopamine hits I get from making new features work. If the launch sputters and I fail to achieve escape velocity in time, I can always return to the current project state with its plodding progress. I want to give this a shot because this new friend I made in Siem Reap introduced me to [bolt.new](https://bolt.new/), and showed me the impressive speed with which he can now automate the building of websites. My approaches to ZAMM in particular and productivity in general this year have not been working great, so it's perhaps time to try out some new approaches for this new year. (As 2024 draws to a close, I find myself mentally exhausted and unwilling to work, hence the extreme delay in getting this blog post out. But I am nowhere at all as exhausted as I was touring New Zealand at the end of 2023, so I have definitely made some major improvements to the sustainability of my work ethic this year.)
+
+The other opinion I have is that I want to keep exploring that feeling of this project not mattering. In [the last update](/blog/v0.2.0/), I mentioned how having a second project going meant that I could take this one less seriously. That other project has since stalled because my partner hasn't worked much on it, and I don't want to be the only one working on it. I don't blame them at all because giving up on a project is something I'm all too familiar with. But I think having even a moment where it truly felt like ZAMM didn't need to matter allowed me to recognize and explore this feeling more, and in doing so I found that the project not mattering allows me to be more fully present in the moment, rather than always needing to subjugate the present moment in service of a future goal, with all forms of relaxation nothing more than a temporary diversion enabling the more efficient subjugation of a future present moment.
+
+I had of course started out fully intending for ZAMM to be practically useful to *me*, at the very least. But as Coach Bennett from Nike Run Club says, you don't run towards a goal, you run with it. Goals are there to help you, and you write your goals in pencil so that as you change, your goals can change with you. Or as [CJ the X says](https://youtu.be/GZg_36utl2w), working towards a goal is part of the experience of life even if achieving goals isn't the end all be all of life. Given the way this project and my life has played out over the past year, I think it's best for me to proceed under the attitude that whatever work I do on ZAMM is going to negligibly impact my future career prospects. I have been trying out the dream of automating coding in various ways (especially with natural language) throughout my 20's, falling for the classic fallacy that because it's so straightforward for me, it must also therefore be straightforward to program into the computer. The entire field of [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing) (NLP) drives home that point very severely: human language is something that humans of all intelligence levels can trivially grasp, and yet for the longest time computers had trouble understanding even basic [Winograd schemas](https://en.wikipedia.org/wiki/Winograd_schema_challenge). Having even *gone* to school specifically to get a master's in NLP, how did I ever think it would've been possible for me as a solo developer with no machine learning training to tackle such a hard problem? I am at a loss to explain my former levels of unmitigated "delulu" other than chalking it up to the [hubris of youth](https://www.reddit.com/r/RedditInsider/comments/21v7ch/you_need_to_know_about_udarqwolff/).
+
+So if present-me were to say something to the past-me of April 2016, when I was first smitten by this dream at 20 years old, it would be this: "Give up now. The time is not yet ready. Wait until these things called 'LLM's' start making it into the mainstream around 2020, or maybe even wait until this thing called 'chain-of-thought prompting' gets invented in 2022. Until then, you might as well just fuck around and do whatever else you want, because literally none of it is going to matter until 2022. Oh and BUY BITCOIN!" I think future me may well give present me that advice too, but if they do then this time around I am much better equipped to actually take the non-Bitcoin advice than early 20's me would've been. At the very least, I'll work on ZAMM knowing knowing full well that it's not going to matter.
+
+You could ask, what's the point in working on a project that doesn't matter? But you might as well ask, what's the point in living a life that doesn't matter (in the grand scheme of things)? "It's kind of enjoyable" is all the justification you really need. One thing this refactoring experience has made clear to me is that this project gives me a sense of control over my computing experience like nothing else does. Here is a tiny plot of land that I've carved out for myself. It is an economically unproductive plot of land, but it is one I have full control over, at least insofar as one has full control over anything in the digital world. I control when the upgrades happen, when the settings change, how the UI shifts or doesn't shift. Nobody is running [A/B tests](https://en.wikipedia.org/wiki/A/B_testing) on me and remotely flipping a switch that changes how my software works, as I've done to millions of users in the past myself. If I don't like something, I know where and how to fix it, and I can do so on my own schedule instead of waiting for an external entity to finally prioritize my issue. To me, this is digital empowerment. Perhaps it reflects the degree of control I yearn for over my own life.
+
+I think this is what Richard Stallman was getting at with all his talk about [free software](https://www.gnu.org/philosophy/free-sw.html) -- "free" as in speech, not as in beer. "Free" includes the freedom to change and improve the software, but like with other freedoms, an economically constrained individual doesn't feel very "free" to do the thing the freedom is about. I feel economically constrained by the time and energy I have to spend on understanding other people's software in order to modify it, so I generally don't do so without strong motivation. With ZAMM, the cost is pre-paid because I made it myself, so I get to have a taste of that software freedom even if the freedom doesn't lead to anything practical. (I should mention that even if a freedom is only economically accessible to a small subset of society, it's still important that the freedom exists for anyone fortunate enough to find themselves in a spot to exercise it.)
+
+And of course, if I want this project to matter, I can also take the perspective that it has already mattered in all sorts of indirect ways. Whatever I do next will be informed by my experience working on ZAMM, both in terms of the technical expertise and what I've learned about myself in the process. When it comes to technical expertise, I'm glad that I've worked on this project for long enough to have the opportunity to do these sort of major migrations; at my previous jobs, I've only ever done complete rewrites or seamless migrations. I can now further appreciate both the challenges of this sort of migration, and the ways in which I believe LLMs could really help with such large-scale changes to the codebase. Even a modicum of understanding goes a long way in doing simple refactors that automated migration scripts cannot otherwise handle.
+
+And when it comes to knowing myself, I think I have become much better at recognizing not just the extent of my limitations, but also the range of my present capabilities. It feels excruciatingly frustrating at times to not only have such extreme limitations on my personal productivity, but also to not feel as if there's a clear path to overcoming those limitations. I've felt this sort of frustration at my leg too during my race training, where first heel pain and then later knee pain would pop up. "Why can't you just fucking work right?," I would think when the pain still persists after a few days. But if I were physically disabled, this sort of mentality would be an unhealthy one that gets me to hate my body. No, it is not normal for someone to have such a seemingly crippling inability to be productive. But neither has being convinced that I am obviously capable of more gotten me to actually do more. I may be capable of more *one day*, but that day is not today. Letting go of the past and accepting where you are now is [one of the first steps](https://www.helpguide.org/wellness/health-conditions/living-well-with-a-disability) to living well with a disability, and while this isn't a "disability" in the usual sense, this is still a limitation that I must take into account for so long as it is present in my life.
+
+On a more meta level, even this accompanying blog has mattered by spurring me to collect my thoughts in a much more organized manner than before. I've jotted down notes and thoughts over the years, but it wasn't like I had an important manifesto I needed to tell people about. Having an *existing* blog, on the other hand, means that thoughts don't have to be important to be serialized in essay form. Between the [inaugural blog post](/blog/v0.1.0/) and this current blog post, I have been able to document concrete examples of my coding and debugging thought processes. And from the way I procrastinated on writing the current blog post, I see that walking along this current journey of mine will be meaningful not just for improving my coding productivity, but for improving my productivity on any project I apply myself to in the future.
+
+Finally, I do think this project is helping to rekindle the joy I used to find in coding. When I was a teenager, coding used to be play. Somewhere along the line, I forgot how to play and only knew how to write code that matters, whether for the paycheck or for personal goals. As I said [before](/blog/v0.1.0/), I used to do "things just because they were *fun*, not because they were going to matter one day." I remember when I was a teen, a new programming language or library would be an exciting new thing to try out. Somehow, nowadays I have acquired more of a sense of anxiety around such things: "Oh boy, am I doing this right? Ok, phew, I got it to work a little bit; let's commit before anything bad happens."
+
+## A rant about Safari/WebKit
+
+[Is Safari the new Internet Explorer](https://issafarithenewie.com/), in terms of how shit it is at implementing web standards in the same way that every other modern browser seems to do? Okay, maybe it's not that bad given that Safari doesn't do *that* much worse than the other browsers on the [Acid3](http://acid3.acidtests.org/) and [Interop](https://wpt.fyi/interop-2024?stable) web standards compliance tests, so it's possible that I simply chanced upon an unlucky part of Safari's web compliance. But in my limited experience so far, whenever there's been a browser-specific problem with rendering something, that browser has consistently been Safari.
+
+As an example, look at how it renders this info box in Storybook. Look at the lack of blur for the transparency effect, despite me explicitly asking the browser to render the blur. Look at the shitty shadows on the edges, which do finally get rendered properly when the drawer closes, but not before leaving behind a whole trail of residue on the bottom. I mean, <span class="khmer">អូព្រះអើយ</span>, what a *mess*!
+
+<video playsinline autoplay loop muted width="100%" max>
+  <source src="/posts/v0.2.1/infobox-safari.mp4" type="video/mp4" />
+  This browser does not display the video tag.
+</video>
+
+Compare and contrast with Chrome: clean and crisp borders, no residue when animating the closing of the drawer, and the strong blur that I asked for that makes the foreground text highly readable.
+
+<video playsinline autoplay loop muted width="100%" max>
+  <source src="/posts/v0.2.1/infobox-chrome.mp4" type="video/mp4" />
+  This browser does not display the video tag.
+</video>
+
+Firefox's rendering is as good as Chrome, from what I can tell.
+
+I had originally wanted to keep using Safari instead of Chrome to contribute to browser diversity, to do my part in preventing Chrome from gaining an overwhelming monopoly in the browser market. The last time this happened, it was with Microsoft's Internet Explorer. Developers would decide to only make their apps work on IE because engineering resources are limited and almost all their users would be on IE, but that made it hard for competing browsers to gain users when a lot of the websites they use only work on IE. IE only contributed to the problem because it often worked a bit different from the web standards everyone had agreed to -- it was such a common problem for developers to get a website working on every single browser *except* IE, that some simply had IE-specific code and styling.
+
+This had historically been a tried-and-true tactic at Microsoft called ["Embrace, Extend, and Extinguish"](https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish). First, act friendly and embrace these open standards that everyone had agreed to. Build a good product that gains market dominance, perhaps by also leveraging Microsoft's other monopoly at the time, the Windows OS. Then, once most people are using the Microsoft product, start making unilateral extensions to the open standard, thus forcing companies to choose between committing to the open standard or focusing only on serving the majority of their userbase that uses the Microsoft product. Many would choose the latter, thus effectively extinguishing that open standard without Microsoft forcing anyone to. Even if other vendors of the open standard wanted to add support for Microsoft's random surprises, such features took time to implement, and in any case the open standard was still dead because the industry would just be reacting to Microsoft's whims.
+
+![Look at me. I am the open standard now.](/posts/v0.2.1/open-standard.png)
+
+The rise of Firefox and later Chrome successfully dislodged IE from its perch, such that its lack of standards compliance became a liability rather than an advantage. Microsoft eventually killed IE in favor of Edge, which is based on the open-source parts of Chrome, because making IE standards-compliant was just too much trouble. There have since been [worrying signs](https://www.theverge.com/2018/1/4/16805216/google-chrome-only-sites-internet-explorer-6-web-standards) that Chrome is starting to do similar things as IE -- if not on purpose, then simply due to Google's optimization for organizational incentives.
+
+I wanted to avoid contributing to the problem by using a less commonly used browser (sometimes hipsters are good for the computing environment), but after my experiences developing with Safari in mind due to Tauri's dependence on WebKit, I think I'm going to switch back to a Firefox-based browser. I recognize that the modern web is really complicated and that it is very difficult to maintain a functioning web browser that is up-to-date with all of the latest changes to the web, but at Apple's trillion-dollar scale, this is only a matter of corporate values and priorities, and I don't wish to reward Apple after getting to see the state of its browser.
+
+## Personal life
+
+### Jogging
+
+I ended up finishing the race that I had been [training](/blog/v0.1.6/) for, but ran a 5K instead of the half marathon I'd initially planned for. My plantar fasciitis had derailed my training regime so much that I lost my regular running habit and only ended up building up my practice runs again one week before the race. There were apparently 14,000 runners from 87 countries at the race; it was such a large crowd that I was constantly passing by clumps of other runners the entire way through. The fog over the moat of [Bayon](https://en.wikipedia.org/wiki/Bayon), sandwiched in between colorfully lit up trees on both banks of the moat, made it easily the most beautiful run I'd ever been on.
+
+While training in the evenings at Royal Gardens, I'd struggled to keep my average pace under 6 minutes per kilometer, because my personal goal was to run the 5K in less than half an hour. But at Angkor Wat, the crisp and cool morning air meant that I was able to easily finish the 5K in 26 minutes 29 seconds while also feeling like I could've gone on for longer. Even if it wasn't particularly hard, and even if I didn't work particularly hard for it, the feeling of accomplishing something that a whole lot of people are coming together to accomplish was so addicting that I signed up right afterwards for a 10K at Angkor Wat on December 22nd.
+
+Liza and I and our friends trained semi-regularly in the three weeks in between the 5K and the 10K. I had hoped to be able to run the 10K in half an hour, but to my surprise, I ended up running this 10K at an even faster average pace than I did the 5K! In fact, I set all sorts of personal records this time:
+
+- My fastest 1K, at 4:25
+- My fastest mile, at 7:17
+- My fastest 5K, at 22:39
+- My fastest 10K, at 50:20
+
+Afterwards, I was limping on my left leg due to pain right around the knee cap. The physiotherapist said the pain came from some tendon next to the MCL, and prescribed some exercises for me to do. Between this and the plantar fasciitis, it sure seems that my main issue with running isn't my muscles, but with how tight my body is. I hope I can fully recover and start running again in the new year.
+
+### Learning Khmer
+
+I'm really happy that my Khmer vocabulary, grammar, and pronunciation have finally improved enough for me to notice a [phase transition](https://en.wikipedia.org/wiki/Phase_transition) in how I engage in casual conversations. Previously, I would have so much trouble understanding others -- and they'd likewise have so much trouble understanding me -- that having an extended conversation was all but impossible. Now, I've gotten to get to know a couple of people on a basic level.
+
+For example, I've gotten to know the security guard at my building. He was born in a village somewhere (I don't recognize the name) but moved to Siem Reap a long time ago and has been here ever since. He works a few different jobs, including guarding the complex I'm staying at at night, watering the plants for five different homes across the street during the day, and also washing the street (and some other things that I didn't catch) for yet another home in the neighborhood. He's got a son/daughter (the gender of kids are unspecified by default in Khmer) who teaches at Angkor High School, another son who is an electrician, and a granddaughter who goes to a nearby preschool on the same block. The electrician son works during the day and during the night as well, only coming back home at 2 AM to drink by himself. My language skills aren't refined enough to ask on the spot whether this son's doing electrician work the entire day, or if he's instead working separate unrelated jobs.
+
+I chatted briefly with the Vireak Buntham desk agent in Bangkok. (Vireak Buntham is a popular bus company that runs a route from Bangkok to Siem Reap.) She's been living in Bangkok for the last two years but misses her family in Phnom Penh. She learned Thai by herself, simply by living in Thailand and constantly practicing Thai with her coworkers. She isn't the biggest fan of Bangkok, but does appreciate that cosmetics are cheaper there than elsewhere. She did have to say "skincare" in English, and therein lies the current difficulty for me in getting to the next level of Khmer: there's a really long tail of increasingly obscure words for me to learn. I mean, normally, even if I were to chance upon the Khmer words for "skincare" or "comestics," I wouldn't necessarily be interested in retaining that vocabulary given that I have many other words to memorize, and when's the next time I'll find myself talking about such topics anyway? And yet, by ignoring such vocabulary, I restrain my conversation partners from talking freely about whatever their interests in life may be, and that hinders my ability to get to know someone beyond the usual superficial "Oh so where did you grow up?" pleasantries.
+
+My pronunciation has improved to the point where I don't usually have to repeat myself too often. The main trouble I've noticed is that if someone asks me "How are you?" in English, and I try to respond in Khmer, I struggle to get people to understand "<span class="khmer">ចុះបង?</span>" ("How about you?") instead of "<span class="khmer">ជប៉ុន?</span>" ("[Are you] Japanese?"). I think that's because they're still trying to parse me as speaking English, because even when I try saying "<span class="khmer">ចុះបងវិញ? ចុះអ្នកវិញ?</span>" (longer ways of asking the same thing), they just shake their heads and apologize for not knowing much English.
+
+My listening has also improved to the point where I can very occasionally figure out variants in pronunciation on the fly -- for example, when Phnom Penh folks pronounce <span class="khmer">ថ្ងៃ</span> as <span class="khmer">ងៃ</span>. Once, at a gathering with Liza's extended family in Siem Reap, I could sometimes even *sort of* make out the topic at hand if I focused hard on what they were saying, and I occasionally responded to a sentence or two that I understood. I am still normally just a part of the background scenery until someone else makes an active effort to talk to me specifically, but it was still nice having that first win where I was better able to insert myself into a group. Here too do I feel the need to understand a long tail of words, because group conversations invariably meander through a variety of topics.
+
+I've also hit an inflection point where I can start understanding some Khmer language resources *in* Khmer, such as [this article](https://thmeythmey.com/?page=detail&id=47753) on <span class="khmer">កាដូ</span>, the Khmer word for "gift." I don't understand every single word there, but I do recognize enough to understand that they're saying this is a French loanword that has made it into Khmer (hence why I couldn't find it in major dictionaries), but which has since displaced the native Khmer word in everyday usage. I don't understand every article like this, but I can see that a whole new world is starting to open up to me, because resources written about the Khmer language for a Khmer audience are likely going to involve greater detail that those written for a purely foreign audience, who are also less likely to be at a point in their language learning journey where they can appreciate such nuances. I can't quite understand Khmer dictionaries yet, but given that even English dictionaries give very technical definitions for simple words -- for example, the American Heritage English dictionary defines "gift" as "Something that is bestowed voluntarily and without compensation" -- I think it'll be quite a while before Khmer dictionaries become useful for me.
+
+Marathon running is as much about the mental games you play with yourself during the run as it is about physical stamina, and learning a new language is perhaps the ultimate marathon I've been engaged in. Sometimes, the smartest thing to do when running is to back off the pace a little, and so too with language learning. When I started Khmer school again in March of this year, I was learning Khmer every single workday, but for the last two months I've gone down to learning Khmer just 3 out of 5 days a week because five days a week was starting to feel just a bit too much. Upon reviewing the statistics of my [Anki](https://apps.ankiweb.net/) history, I can see that this isn't just me feeling randomly overwhelmed, but it is in fact due to an ever-increasing workload from an ever-increasing set of vocabulary to learn, because Anki schedules my workload based on how well or poorly I am remembering my cards:
+
+- The first week of March 18, I started out just reviewing dozens of words per day 
+- The week of April 8th, the workload rose to ~200 words a day for 4 days
+- The week of June 3rd, it rose further to ~250 card reviews per day for 3 days
+- By the week of July 8th, I had one day with 200 card reviews, two days with 250 card reviews, and two days with 300 card reviews
+- The week of August 26, it went up to 300 reviews per day, with over 350 reviews on two days
+- By the end of September and going into October, I started missing days semi-regularly. By the week of October 28 I was doing over 400 card reviews a day 3 out of 5 days of the week, and these card reviews would take multiple hours and felt unsustainable.
+- Since then it's been regularly declining after I cut down on my classes. On the week of December 16, I did 336 reviews on Monday but just ~250 reviews on subsequent days.
+
+I've also activated [FSRS](https://docs.ankiweb.net/deck-options.html#fsrs), an algorithm that's apparently [based on](https://github.com/open-spaced-repetition/fsrs4anki/wiki/ABC-of-FSRS) the [Atkinson-Shiffrin model](https://en.wikipedia.org/wiki/Atkinson%E2%80%93Shiffrin_memory_model) for memory acquisition, which should start lightening up my review load even more once I get through the backlog of already scheduled cards.
+
+In any case, it's exciting to experience a level of social interaction that I was incapable of at the beginning of this year, and I look forward to even more progress in the year to come!
+
+### Motorcycle riding
+
+I almost got into a motorcycle accident on the way back home from 1961 cafe. I was riding out of the parking lot at the public park across the street from the cafe. I looked to the left and saw only a slow-moving food cart, on this road that has a bit of a bend. I looked to the right and saw that it was completely empty. I spurted out to make my left turn -- but braked sharply after hearing two **loud** honks as this Grab food driver careens into view braking hard himself while he turns and causes his bike to start sliding out from under him. Fortunately, by this time he had slowed down enough to hop off the bike and save it from crashing onto the ground.
+
+He was downright pissed and I was annoyed as hell. "WTF bro, why'd you have to go so fast?" I thought as I sped away wordlessly, watching him glare at me through my side mirrors. I'm biased, of course, so I do think he was going way too fast for road conditions. I was able to quickly come to a halt with my bike jutting out just a bit into the opposite lane, whereas he appears to have left himself such a low margin of error that he nearly crashed after braking. My view of him when I checked left was occluded by either the food cart or the bend in the road, so I'm guessing that he didn't see me either.
+
+But regardless of who's right or wrong, it remains true that there are drivers like him on the road who will overtake other vehicles at high speeds, and there are drivers like me on the road who will zip out at inopportune times, unaware of other rapidly approaching vehicles. So long as that's the case, these sort of close calls will keep happening, and eventually one of these close calls will turn into an actual tragedy. So the question is, how should I drive knowing that there are such drivers as that guy and me on the road? Because if my answer is, "Keep doing as I did before, because I did nothing wrong," the result will almost certainly be something regrettable. Some people see doing something with, say, a 1% chance of catastrophic risk as totally acceptable, because there's a 99% chance everything will turn out fine. That may well be true if you're careful to only do it once, but if you make the 99% safe thing a weekly habit, there's only a [59% chance](https://duckduckgo.com/?q=0.99+%5E+52&t=ffab&ia=calculator)  you make it past a whole year without catastrophe. Make the 99% safe thing a *daily* habit, and that chance of safely getting through a whole year slims down to [just 2.5%](https://duckduckgo.com/?q=0.99+%5E+365&t=ffab&ia=calculator).
+
+And so, in the interests of better risk management, I think I should start driving more defensively again. There are the usual things I should remind myself to do, like [looking left twice](https://www.roadtripamerica.com/forum/content.php?27) before crossing the road, or preparing for potential surprises behind visual obstacles instead of assuming empty space there. I should be more careful about getting out of parking spaces and across intersections, at least as much as practical, because you'll never get anywhere if you're completely unassertive in heavy traffic conditions. In fact, many other drivers already confidently weave through congested intersections before I do. But one mitigating factor in such situations is that usually everyone in a busy intersection is aware of how confusing it is, and is therefore primed to react to surprising events. Perhaps counterintuitively, I should pay extra attention to situations where the street appears to be *mostly* clear, in order to somewhat offset the natural inclination to forgo precaution. In the off-chance that it is actually not clear, the other driver may not be ready to react because they're also assuming the street is clear; if the street actually is clear, I can afford to go slower than usual.
+
+It appears I didn't write this down publicly when I [bought my bike](/blog/v0.1.2/), but back then I was really careful because I had heard that it's not "if" you'll get into a motorcycle accident, it's *when*. Vivid scenes would come to mind of my body being violently knocked around by both metal and pavement, my helmet smacking the ground with a loud thwack as my bones crunched under sudden pressure. After eight months of riding the bike around, I've gotten much more comfortable -- perhaps a little too comfortable, because I've also heard that's when the accidents tend to happen: not when you're still as cautious as you were in the beginning, but once you've gotten the hang of things and let your guard down a bit. Funny, I just realized that applies to how serial killers eventually get caught as well. In any case, here's to hoping for a safe and healthy 2025 with no accidents!

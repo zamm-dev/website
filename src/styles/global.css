@@ -166,6 +166,9 @@ img {
 	/* -20px because of the extra bottom margin from <p> elements */
 	margin-top: -20px;
 }
+video {
+	border-radius: 8px;
+}
 code {
 	padding: 2px 5px;
 	background-color: rgb(var(--gray-light));

@@ -10,11 +10,35 @@ type Props = {
   linkBlogPost?: boolean;
 };
 
+type NestedHeading = {
+  slug: string;
+  text: string;
+  children: NestedHeading[];
+};
+
 const {
   release,
   headings,
   linkBlogPost,
 } = Astro.props;
+
+const nestedHeadings = headings?.reduce((acc, heading) => {
+  if (heading.depth === 2) {
+    acc.push({
+      slug: heading.slug,
+      text: heading.text,
+      children: [],
+    });
+  } else if (heading.depth === 3) {
+    const parent = acc[acc.length - 1];
+    parent.children.push({
+      slug: heading.slug,
+      text: heading.text,
+      children: [],
+    });
+  }
+  return acc;
+}, [] as NestedHeading[]);
 
 const {
   zammVersion: releaseVersion,
@@ -33,14 +57,26 @@ const blogPostLink = `/blog/${versionSlug(release)}`;
 ---
 
 <div class="release-container">
-  {headings &&
+  {nestedHeadings &&
     <nav>
-      This is a blog post about the release of ZAMM version {releaseVersion}, as well as other topics of interest to me. Feel free to jump directly to a given topic:
+      This is a blog post about the release of ZAMM version {releaseVersion}, as well as other topics of interest to me.
+      {nestedHeadings.length > 0 && <span>Feel free to jump directly to a given topic:</span>}
       <ul>
         {
-          headings.map((heading) => (
+          nestedHeadings.map((h2Headings) => (
             <li>
-              <a href={`#${heading.slug}`}>{heading.text}</a>
+              <a href={`#${h2Headings.slug}`}>{h2Headings.text}</a>
+              {h2Headings.children.length > 0 &&
+                <ul class="h3-headings">
+                  {
+                    h2Headings.children.map((h3Heading) => (
+                      <li>
+                        <a href={`#${h3Heading.slug}`}>{h3Heading.text}</a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              }
             </li>
           ))
         }
@@ -89,5 +125,14 @@ const blogPostLink = `/blog/${versionSlug(release)}`;
     list-style-type: none;
     padding-left: 1rem;
     margin-top: 0.5rem;
+  }
+
+  nav ul.h3-headings {
+    list-style-type: '-';
+    margin-top: 0;
+  }
+
+  nav ul.h3-headings li {
+    padding-left: 0.5rem;
   }
 </style>
