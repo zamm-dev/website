@@ -104,7 +104,7 @@ const posts = (await getCollection('blog')).sort(
 							<li>
 								<a href={`/blog/${versionSlug(post.data)}/`}>
 									<div class="img-container">
-										<img src={post.data.heroImage} alt={post.data.title} />
+										{post.data.heroImage && <img src={post.data.heroImage} alt={post.data.title} />}
 									</div>
 									<h4 class="title">
 										<span class="version">v{post.data.zammVersion}: </span>

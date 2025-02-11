@@ -29,7 +29,7 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 			}
 			.hero-image {
 				width: fit-content;
-				margin: 0 auto;
+				margin: 0 auto 3em;
 			}
 			.hero-image img {
 				display: block;
@@ -81,7 +81,7 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 			}
 			.title {
 				max-width: 1020px;
-				margin: 3em auto 1em;
+				margin: 0 auto 1em;
 				padding: 0;
 				text-align: center;
 				line-height: 1;
@@ -118,9 +118,11 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 		<Header />
 		<main>
 			<article>
-				<div class="hero-image">
-					{heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
-				</div>
+				{heroImage && (
+					<div class="hero-image">
+						<img width={1020} height={510} src={heroImage} alt="" />
+					</div>
+				)}
 				<div class="title">
 					<h1><span class="version">v{zammVersion}: </span>{title}</h1>
 					<table class="dates">
