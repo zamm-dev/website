@@ -53,9 +53,18 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 			}
 			.prose {
 				text-align: justify;
-				font-family: 'EB Garamond', serif;
+				font-family: 'EB Garamond', 'Battambang', serif;
 				font-size: 26px;
 				line-height: 140%;
+			}
+			.prose :global(a) {
+				color: var(--accent-dark);
+			}
+			@media (max-width: 480px) {
+				.prose {
+					text-align: left;
+					font-size: 22px;
+				}
 			}
 			.prose :global(li p:first-of-type) {
 				margin-top: 0.5em;
