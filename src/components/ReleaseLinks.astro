@@ -43,14 +43,7 @@ const nestedHeadings = headings?.reduce((acc, heading) => {
 const {
   zammVersion: releaseVersion,
   title: blogPostTitle,
-  releaseLinks: {
-    page: releasePageLink,
-    windowsExe: windowsExeLink,
-    windowsMsi: windowsMsiLink,
-    macDmg: macDmgLink,
-    linuxAppImage: linuxAppImageLink,
-    linuxDeb: linuxDebLink,
-  },
+  releaseLinks,
 } = release;
 
 const blogPostLink = `/blog/${versionSlug(release)}`;
@@ -82,26 +75,31 @@ const blogPostLink = `/blog/${versionSlug(release)}`;
         }
       </ul>
     </nav>
-    <hr />
   }
 
-  Download <a href={releasePageLink}>ZAMM v{releaseVersion}</a> {linkBlogPost &&
-    <span>
-      &ndash; <a href={blogPostLink}>{blogPostTitle}</a>
-    </span>
-  } for:
+  {releaseLinks &&
+    <div>
+      <hr />
 
-  <ul>
-    <li>
-      Windows: <a href={windowsExeLink} download>exe</a> / <a href={windowsMsiLink} download>msi</a>
-    </li>
-    <li>
-      Mac: <a href={macDmgLink} download>dmg</a>
-    </li>
-    <li>
-      Linux: <a href={linuxAppImageLink} download>AppImage</a> / <a href={linuxDebLink} download>deb</a>
-    </li>
-  </ul>
+      Download <a href={releaseLinks.page}>ZAMM v{releaseVersion}</a> {linkBlogPost &&
+        <span>
+          &ndash; <a href={blogPostLink}>{blogPostTitle}</a>
+        </span>
+      } for:
+
+      <ul>
+        <li>
+          Windows: <a href={releaseLinks.windowsExe} download>exe</a> / <a href={releaseLinks.windowsMsi} download>msi</a>
+        </li>
+        <li>
+          Mac: <a href={releaseLinks.macDmg} download>dmg</a>
+        </li>
+        <li>
+          Linux: <a href={releaseLinks.linuxAppImage} download>AppImage</a> / <a href={releaseLinks.linuxDeb} download>deb</a>
+        </li>
+      </ul>
+    </div>
+  }
 </div>
 
 <style>

@@ -2,7 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import ReleaseLinks from '../components/ReleaseLinks.astro';
+import versionSlug from '../lib/versionSlug';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from "astro:content";
 
@@ -13,6 +13,7 @@ const latestPost = blogPosts.sort((a, b) => {
 	const bVersion = b.data.zammVersion.split('.').map(Number);
 	return bVersion[0] - aVersion[0] || bVersion[1] - aVersion[1] || bVersion[2] - aVersion[2];
 })[0];
+const latestPostLink = `/blog/${versionSlug(latestPost.data)}`;
 ---
 
 <!doctype html>
@@ -40,12 +41,8 @@ const latestPost = blogPosts.sort((a, b) => {
 		<Header />
 		<main>
 			<h1>ZAMM</h1>
-			<video playsinline autoplay muted width="100%">
-				<source src="/demo.mp4" type="video/mp4" />
-				This browser does not display the video tag.
-			</video>
-			<p>Hi, I'm Amos! I've been hacking on a custom AI tool, dedicated to my partner Liza. It doesn't actually do anything yet apart from basic chat, but it does comes with an accompanying blog on topics I want to record my thoughts on.</p>
-			<ReleaseLinks release={latestPost.data} linkBlogPost />
+			<p>Hi, I'm Amos! This is a blog documenting my exploration of AI automation and other topics I want to record my thoughts on. Liza is my partner and I mention her sometimes.</p>
+			<p>Check out the latest post: <a href={latestPostLink}>ZAMM v{latestPost.data.zammVersion} &ndash; {latestPost.data.title}</a>.</p>
 		</main>
 		<Footer />
 	</body>

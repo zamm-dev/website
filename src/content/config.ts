@@ -21,7 +21,7 @@ const BlogSchema = z.object({
 	zammVersion: z.string(),
 	title: z.string(),
 	description: z.string(),
-	releaseLinks: ReleaseLinksSchema,
+	releaseLinks: ReleaseLinksSchema.optional(),
 	discussions: DiscussionLinksSchema.optional(),
 	// Transform string to Date object
 	pubDate: z.coerce.date(),
