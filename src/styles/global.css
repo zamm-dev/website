@@ -68,6 +68,14 @@
 	font-display: swap;
 }
 
+@font-face {
+	font-family: 'EB Garamond';
+	src: url('/fonts/EBGaramond-BoldItalic.ttf') format('truetype');
+	font-weight: 700;
+	font-style: italic;
+	font-display: swap;
+}
+
 body {
 	font-family: 'Atkinson', 'Nokora', sans-serif;
 	margin: 0;
