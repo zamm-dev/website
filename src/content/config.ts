@@ -20,7 +20,7 @@ export type DiscussionLinks = z.infer<typeof DiscussionLinksSchema>;
 const BlogSchema = z.object({
 	zammVersion: z.string(),
 	title: z.string(),
-	description: z.string(),
+	description: z.string().optional(),
 	releaseLinks: ReleaseLinksSchema.optional(),
 	discussions: DiscussionLinksSchema.optional(),
 	// Transform string to Date object
