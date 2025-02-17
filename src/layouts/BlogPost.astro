@@ -21,6 +21,13 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 <html lang="en">
 	<head>
 		<BaseHead title={fullTitle} description={description} image={heroImage} />
+		<script is:inline>
+			var remark_config = {
+				host: "https://comments.zamm.dev",
+				site_id: "remark",
+			};
+		</script>
+		<script is:inline>!function(e,n){for(var o=0;o<e.length;o++){var r=n.createElement("script"),c=".js",d=n.head||n.body;"noModule"in r?(r.type="module",c=".mjs"):r.async=!0,r.defer=!0,r.src=remark_config.host+"/web/"+e[o]+c,d.appendChild(r)}}(remark_config.components||["embed"],document);</script>
 		<style>
 			main {
 				width: calc(100% - 2em);
@@ -111,6 +118,9 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 			.dates a {
 				color: rgb(var(--gray));
 			}
+			#remark42 {
+				margin: 3em auto;
+			}
 		</style>
 	</head>
 
@@ -146,6 +156,7 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 					<div class="prose">
 						<slot />
 					</div>
+					<div id="remark42"></div>
 				</div>
 			</article>
 		</main>
