@@ -118,9 +118,6 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 			.dates a {
 				color: rgb(var(--gray));
 			}
-			#remark42 {
-				margin: 3em auto;
-			}
 		</style>
 	</head>
 
@@ -152,11 +149,10 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 				</div>
 				<div class="blog-post-body">
 					<ReleaseLinks release={data} {headings} />
-					<DiscussionLinks {...data.discussions} />
 					<div class="prose">
 						<slot />
 					</div>
-					<div id="remark42"></div>
+					<DiscussionLinks {...data.discussions} />
 				</div>
 			</article>
 		</main>

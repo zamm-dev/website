@@ -9,16 +9,17 @@ const {
 
 ---
 
-{hackerNewsLink &&
-  <div class="discussion-container">
-    <p>Discuss on <a href={hackerNewsLink}>HN</a></p>
-    <hr />
-  </div>
-}
+<div class="discussion-container">
+  {hackerNewsLink &&
+      <p>Discuss on <a href={hackerNewsLink}>HN</a> or below:</p>
+  }
+  <div id="remark42"></div>
+</div>
 
 <style>
   .discussion-container {
     color: rgb(var(--gray));
+    margin: 4em auto;
   }
   
   hr {
@@ -26,7 +27,7 @@ const {
   }
 
   p {
-    margin: 0;
+    margin: 0 0 1em;
   }
 
   a {
