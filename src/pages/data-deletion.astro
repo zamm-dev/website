@@ -1,0 +1,31 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_DESCRIPTION } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="About ZAMM" description={SITE_DESCRIPTION} />
+		<style>
+			h1 {
+				font-family: 'Nasalization', Arial, Helvetica, sans-serif;
+        text-transform: uppercase;
+			}
+
+			p {
+				font-family: 'Good Timing', Arial, Helvetica, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+      <h1>Data Deletion</h1>
+			<p>You may delete your blog comments automatically by clicking on your comments and deleting them. Alternatively, you may request deletion of your user data by sending an email to <a href="mailto:privacy@zamm.dev">privacy@zamm.dev</a>.</p>
+		</main>
+		<Footer />
+	</body>
+</html>
