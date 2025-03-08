@@ -1,0 +1,37 @@
+---
+import digestibleSlug from '../lib/digestibleSlug';
+
+type Props = {
+  title: string;
+  version: string;
+};
+
+const { title, version } = Astro.props;
+const digestibleUrl = `/blog/digestibles/${digestibleSlug(version, title)}`;
+---
+
+<div class="digestible">
+  Digestible: 
+  <a href={digestibleUrl} class="digestible-link">
+    {title}
+  </a>
+</div>
+
+<style>
+  .digestible {
+    margin: 0.5rem 0;
+    background-color: var(--info-bg);
+    border-radius: 0.5rem;
+    font-family: var(--sans-serif);
+    font-size: 14px;
+    padding: 0 0 0 1rem;
+  }
+
+  .digestible-link {
+    color: #1890ff;
+  }
+
+  .digestible-link:hover {
+    text-decoration: underline;
+  }
+</style>

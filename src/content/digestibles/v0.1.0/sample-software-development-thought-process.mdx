@@ -1,0 +1,191 @@
+---
+title: 'Sample Software Development Thought Process'
+description: 'An example of how I develop software'
+blogPost: 'v010'
+pubDate: 'March 8, 2025'
+---
+
+This is an example of my software development thought process for a single feature: changing the text inside of chat message bubbles to be left-aligned instead of justified. Back when I was trying to build ZAMM from scratch, I figured that if I were to automate my development workflow, I needed to first observe what exactly I was doing when I coded. In doing so, I continually rediscovered that digital reality also has a [surprising amount of detail](http://johnsalvatier.org/blog/2017/reality-has-a-surprising-amount-of-detail):
+
+<ol style="list-style-type: lower-roman;">
+  <li>
+    It's of course a trivial one-line change that takes maybe 2 minutes tops to find the right file and edit it:
+    ```css
+    .message .text {
+      ...
+      text-align: left;
+    }
+    ```
+  </li>
+  <li>
+    Unfortunately, the text does shift left but the `<p>` elements stay at exactly the same width, causing the chat bubbles to appear as if they have heavy right padding. After confirming that `width: fit-content;` doesn't do the trick either, I do some Googling and find out that this is a [known problem](https://stackoverflow.com/a/73198785) that can't be solved with CSS alone.
+  </li>
+  <li>
+    So I implement the solution with `document.createRange`, adapted to my particular code base:
+    ```svelte
+    <script lang="ts">
+      import { onMount } from "svelte";
+      ...
+      let textElement: HTMLDivElement;
+
+      onMount(() => {
+        setTimeout(() => {
+          const range = document.createRange();
+          range.selectNodeContents(textElement);
+          const textRect = range.getBoundingClientRect();
+          textElement.style.width = `${textRect.width}px`;
+        }, 10);
+      });
+    </script>
+
+    ...
+    <div class="text" bind:this={textElement}>
+      <slot />
+    </div>
+    ...
+    ```
+  </li>
+  <li>
+    Now I find that the width is far too short because I have `box-sizing: border-box;` set on the chat message. I still don't want to deal with padding calculations when reasoning about the size of the entire chat message bubble, so instead I rename the original `text` to `text-container`, wrap my actual text around another div that I call `text`, bind to this div instead, and set the box-sizing on that to `content-box`:
+    ```svelte
+      ...
+      <div class="text-container">
+        <div class="text" bind:this={textElement}>
+          <slot />
+        </div>
+      </div>
+      ...
+
+      <style>
+        ...
+        .text-container {
+          ...
+          box-sizing: border-box;
+        }
+
+        .text {
+          box-sizing: content-box;
+        }
+        ...
+      </style>
+    ```
+  </li>
+  <li>
+    Ideally, I would use `requestAnimationFrame` as an opportunity to resize visual components before they are shown on-screen, to prevent screen flicker. Unfortunately, it appears that in this particular case, the wrong dimensions get returned to `getBoundingClientRect`, so I stick to `setTimeout` to allow the browser to fully render the layout before I ask it to resize things yet again. As such, if you look for it, you will notice a quick flicker on-screen when the chat message is first rendered. If there is a better solution to this problem, please let me know. In any case, I'm probably now at 30 minutes into what should've been a trivially quick thing.
+  </li>
+  <li>
+    Now the tests fail with
+
+    ```
+    TypeError: range.getBoundingClientRect is not a function
+    ```
+
+    because jsdom doesn't implement `range.getBoundingClientRect`. Fair enough, `jsdom` only simulates the DOM without doing any layout calculations, so it wouldn't know what the coordinates are. I'll just mock it:
+
+    ```ts
+    window.document.createRange = vi.fn(() => {
+        return {
+          selectNodeContents: vi.fn(),
+          getBoundingClientRect: vi.fn(() => {
+            return {
+              width: 10,
+              height: 10,
+              top: 0,
+              left: 0,
+              right: 10,
+              bottom: 10,
+            };
+          }),
+        };
+      });
+    });
+    ```
+  </li>
+  <li>
+    I successfully get a new error message:
+    ```
+    TypeError: Cannot read properties of null (reading 'style')
+      ❯ Timeout._onTimeout src/routes/chat/MessageUI.svelte:14:21
+          12|         range.selectNodeContents(textElement);
+          13|         const textRect = range.getBoundingClientRect();
+          14|         textElement.style.width = `${textRect.width}px`;
+            |                     ^
+          15|       }
+          16|     }, 10);
+      ❯ listOnTimeout node:internal/timers:573:17
+      ❯ processTimers node:internal/timers:514:7
+    ```
+    In the browser, the div element is assigned and non-null by the time the component is mounted and the `onMount` callback is triggered. Indeed, even the [official documentation](https://svelte.dev/docs/element-directives#bind-this) shows that you can assume elements to be bound by the time `onMount` is called.
+    
+    For whatever reason, this non-null assumption does not appear to hold for `jsdom`. I guard the code with a null check:
+    ```ts
+    let textElement: HTMLDivElement | null;
+
+    onMount(() => {
+      setTimeout(() => {
+        if (textElement) {
+          ...
+        }
+      }, ...);
+    });
+    ```
+  </li>
+  <li>
+    Now the tests pass, but the typechecker complains:
+    ```
+    Error: Type 'Mock<[], { new (): Range; prototype: Range; readonly START_TO_START: 0; readonly START_TO_END: 1; readonly END_TO_END: 2; readonly END_TO_START: 3; }>' is not assignable to type '() => Range'.
+      Type '{ new (): Range; prototype: Range; readonly START_TO_START: 0; readonly START_TO_END: 1; readonly END_TO_END: 2; readonly END_TO_START: 3; }' is missing the following properties from type 'Range': commonAncestorContainer, cloneContents, cloneRange, collapse, and 25 more.
+        }) as unknown as typeof IntersectionObserver;
+        window.document.createRange = vi.fn(() => {
+          return {
+    ```
+    I make do with a manual cast. There's a whole app to get to, and the benefits of doing this in a potentially more proper way seem minimal:
+    ```ts
+    window.document.createRange = vi.fn(() => {
+      ...
+    }) as unknown as Mock<[], Range>;
+    ```
+  </li>
+  <li>
+    Somehow, the code passes locally but not on CI, where I still get the `range.getBoundingClientRect is not a function` message. (For those unfamiliar with the terminology, [CI](https://en.wikipedia.org/wiki/Continuous_integration) often refers to automated tests and workflows that run on a remote computer before every change you make to the project. This checks that the changes you made don't ripple out in a way that breaks other parts of the project, and also ensures that your code works on a machine other than your own.)
+    
+    I spend some time trying to reproduce this locally, to no avail. After some more Googling, I find that there is an [alternative way](https://github.com/jsdom/jsdom/issues/3002#issuecomment-1118039915) to mock `getBoundingClientRect` in a more direct and type-safe manner, so I try implementing this to see if it helps:
+    ```ts
+      Range.prototype.getBoundingClientRect =  vi.fn(() => {
+        return {
+          x: 0,
+          y: 0,
+          width: 10,
+          height: 10,
+          top: 0,
+          left: 0,
+          right: 10,
+          bottom: 10,
+          toJSON: vi.fn(),
+        };
+      });
+    ```
+  </li>
+  <li>
+    It still fails on CI. Rather than continuing to try to resolve the differences between local and CI environments, it seems a best use of my time to simply make the code more robust by wrapping it in a try-catch. After all, a failure to resize the message chat bubble isn't catastrophic; it will just look ugly.
+    ```ts
+    onMount(() => {
+      setTimeout(() => {
+        if (textElement) {
+          try {
+            ...
+          } catch (err) {
+            console.warn("Cannot resize chat message bubble: ", err);
+          }
+        }
+      }, ...);
+    });
+    ```
+  </li>
+  <li>
+    The CI run fails one more time because the screenshot tests are now failing, so I update the gold screenshots with the new CI output. Not a single pixel rendered on-screen should change without me being made aware of it, and a *lot* of them have just changed all at once.
+
+    And that is how a task that was only estimated to take 2 minutes ended up taking most likely a little over an hour (not counting all the time waiting for CI runs to complete). This sort of thing happening over and over again is how an app that I can probably fully describe in under an hour takes me half a year to build.
+  </li>
+</ol>
+That's the kind of workflow -- from Googling for problems and applying answers from StackOverflow to my local context, to doing refactors that move code around just so I can cleanly insert new code -- that I desperately wish to automate away as much as possible. In no part of this process did I exercise what I consider to be any genuine creativity. Everything was a straightforward reaction to the immediate problem I observed. I want to be doing more of "making the text left-aligned instead of justified" and less of literally everything else.

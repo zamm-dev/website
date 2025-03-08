@@ -17,6 +17,8 @@ discussions:
   hackerNews: https://news.ycombinator.com/item?id=39438440
 ---
 
+import DigestibleLink from '../../components/DigestibleLink.astro';
+
 ZAMM now has a GUI.
 
 Please note that you'll have to sign up for ChatGPT's [Pay As You Go](https://lifehacker.com/openai-s-pay-as-you-go-is-the-best-way-to-use-chatgpt-1850318349) plan and make at least a [$1 payment](https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4) before OpenAI will let you access ChatGPT through this app.
@@ -95,6 +97,7 @@ I know that I am, if not a vaunted "10x developer," then most definitely at leas
     2. The main exception to the usual discipline would be animations. If there exists a way to do snapshot testing of frontend animations, please let me know.
   </li>
   <li>
+    <DigestibleLink version="0.1.0" title="Sample Software Development Thought Process" />
     Document the coding efforts that went into the development process. I recorded my coding process in commits [`93c2ade`](https://github.com/zamm-dev/zamm/commit/93c2ade7614c379f3764221fc7f1ab6d82fba739) to [`f9dc2d4`](https://github.com/zamm-dev/zamm/commit/f9dc2d416403d2046a5156376c1a23ba377411f2) of the repo (now since moved to the [dev-notes](https://github.com/zamm-dev/dev-notes) repo) because if I am to automate my development workflow, I need to first observe what exactly it is that I am doing when I code. As a side effect of doing so, I continually rediscover that digital reality also has a [surprising amount of detail](http://johnsalvatier.org/blog/2017/reality-has-a-surprising-amount-of-detail). I'd always felt this, but now I finally have solid proof. Take for example me realizing that justified text didn't look great for some chat messages:
     <ol style="list-style-type: lower-roman;">
       <li>

@@ -99,7 +99,10 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 			}
 			.blog-link {
 				text-align: center;
-				margin: 2em 0;
+				background-color: var(--info-bg);
+				padding: 1rem;
+				margin: 0;
+				border-radius: 1rem;
 			}
 			.blog-link a {
 				color: var(--accent-dark);
@@ -135,7 +138,7 @@ const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/con
 				</div>
 				<div class="digestible-body">
 					<div class="blog-link">
-						View full blog post: <a href={`/blog/v${zammVersion}/`}>{blogPost.data.title}</a>
+						Full blog post: <a href={`/blog/v${zammVersion}/`}>v{zammVersion} - {blogPost.data.title}</a>
 					</div>
 					<div class="prose">
 						<slot />
