@@ -1,0 +1,46 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import digestibleSlug from '../../../lib/digestibleSlug';
+import Digestible from '../../../layouts/Digestible.astro';
+import type { MarkdownHeading } from 'astro';
+
+export async function getStaticPaths() {
+	const digestibles = await getCollection('digestibles');
+	
+	return await Promise.all(
+		digestibles.map(async (digestible) => {
+			const renderedData = await digestible.render();
+			const blogPost = await getEntry('blog', digestible.data.blogPost.slug);
+			
+			if (!blogPost) {
+				throw new Error(`Blog post not found for digestible: ${digestible.data.title}`);
+			}
+			
+			const version = blogPost.data.zammVersion;
+			const slug = digestibleSlug(version, digestible.data.title);
+			
+			return {
+				params: { slug },
+				props: {
+					digestible,
+					blogPost,
+					headings: renderedData.headings,
+				},
+			};
+		})
+	).then(results => results.filter(Boolean));
+}
+
+type Props = {
+  digestible: any;
+  blogPost: any;
+  headings: MarkdownHeading[];
+};
+
+const { digestible, blogPost, headings } = Astro.props;
+const { Content } = await digestible.render();
+---
+
+<Digestible {...digestible.data} blogPost={blogPost} headings={headings}>
+	<Content />
+</Digestible>

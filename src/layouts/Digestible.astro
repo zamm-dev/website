@@ -1,0 +1,148 @@
+---
+import type { Digestible } from '../content/config';
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import digestibleSlug from '../lib/digestibleSlug';
+import type { MarkdownHeading } from 'astro';
+
+type Props = Digestible & { 
+  headings: MarkdownHeading[];
+  blogPost: CollectionEntry<'blog'>;
+};
+
+const data = Astro.props;
+const {
+	title, description, pubDate, updatedDate, blogPost
+} = data;
+
+const zammVersion = blogPost.data.zammVersion;
+const fullTitle = title;
+const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/content/digestibles/${digestibleSlug(zammVersion, title)}.mdx`;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={fullTitle} description={description} />
+		<style>
+			main {
+				width: calc(100% - 2em);
+				max-width: 100%;
+				margin: 0;
+			}
+			.digestible-body {
+				width: 720px;
+				max-width: 100%;
+				margin: auto;
+				color: rgb(var(--gray-dark));
+			}
+			@media (min-width: 720px) {
+				.digestible-body {
+					padding: 1em;
+					max-width: calc(100% - 2em);
+				}
+			}
+			.prose {
+				text-align: justify;
+				font-family: 'EB Garamond', 'Battambang', serif;
+				font-size: 26px;
+				line-height: 140%;
+			}
+			.prose :global(a) {
+				color: var(--accent-dark);
+			}
+			@media (max-width: 480px) {
+				.prose {
+					text-align: left;
+					font-size: 22px;
+				}
+			}
+			.prose :global(li p:first-of-type) {
+				margin-top: 0.5em;
+			}
+			.prose :global(li p:last-of-type) {
+				margin-bottom: 0.5em;
+			}
+			.title {
+				max-width: 1020px;
+				margin: 0 auto 1em;
+				padding: 0;
+				text-align: center;
+				line-height: 1;
+			}
+			.title h1 {
+				margin: 0 0 0.5em 0;
+				text-align: center;
+				font-family: 'EB Garamond', serif;
+			}
+			.title h1 .version {
+				font-size: 0.8em;
+				color: rgb(var(--gray));
+				font-family: 'Atkinson', 'Nokora', sans-serif;
+			}
+			.dates {
+				margin: 0 auto 0.5em;
+				color: rgb(var(--gray));
+				width: fit-content;
+			}
+			.dates td {
+				text-align: right;
+				padding: 0 0.25rem;
+			}
+			.dates td.date {
+				text-align: left;
+			}
+			.dates a {
+				color: rgb(var(--gray));
+			}
+			.blog-link {
+				text-align: center;
+				margin: 2em 0;
+			}
+			.blog-link a {
+				color: var(--accent-dark);
+				text-decoration: none;
+				font-weight: bold;
+			}
+			.blog-link a:hover {
+				text-decoration: underline;
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<article>
+				<div class="title">
+					<h1>{title}</h1>
+					<table class="dates">
+						<tr>
+							<td>Published</td>
+							<td class="date"><FormattedDate date={pubDate} /></td>
+						</tr>
+						{
+							updatedDate && (
+								<tr>
+									<td><a href={postHistoryUrl}>Last update</a></td>
+									<td class="date"><FormattedDate date={updatedDate} /></td>
+								</tr>
+							)
+						}
+					</table>
+				</div>
+				<div class="digestible-body">
+					<div class="blog-link">
+						View full blog post: <a href={`/blog/v${zammVersion}/`}>{blogPost.data.title}</a>
+					</div>
+					<div class="prose">
+						<slot />
+					</div>
+				</div>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>

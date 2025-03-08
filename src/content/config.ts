@@ -1,4 +1,4 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection, reference, z } from 'astro:content';
 
 export const ReleaseLinksSchema = z.object({
 	page: z.string(),
@@ -39,4 +39,19 @@ const blog = defineCollection({
 	schema: BlogSchema,
 });
 
-export const collections = { blog };
+const DigestibleSchema = z.object({
+	blogPost: reference('blog'),
+	title: z.string(),
+	description: z.string().optional(),
+	pubDate: z.coerce.date(),
+	updatedDate: z.coerce.date().optional(),
+});
+
+export type Digestible = z.infer<typeof DigestibleSchema>;
+
+const digestibles = defineCollection({
+	type: 'content',
+	schema: DigestibleSchema,
+});
+
+export const collections = { blog, digestibles };
