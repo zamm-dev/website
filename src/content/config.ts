@@ -2,11 +2,13 @@ import { defineCollection, z } from 'astro:content';
 
 export const ReleaseLinksSchema = z.object({
 	page: z.string(),
-	linuxAppImage: z.string(),
-	linuxDeb: z.string(),
-	macDmg: z.string(),
-	windowsExe: z.string(),
-	windowsMsi: z.string(),
+	installers: z.object({
+		linuxAppImage: z.string(),
+		linuxDeb: z.string(),
+		macDmg: z.string(),
+		windowsExe: z.string(),
+		windowsMsi: z.string(),
+	}).optional(),
 });
 
 export type ReleaseLinks = z.infer<typeof ReleaseLinksSchema>;

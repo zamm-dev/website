@@ -52,7 +52,11 @@ const blogPostLink = `/blog/${versionSlug(release)}`;
 <div class="release-container">
   {nestedHeadings &&
     <nav>
-      This is a blog post about the release of ZAMM version {releaseVersion}, as well as other topics of interest to me.
+      This is a blog post about the release of
+      {releaseLinks
+        ? <a href={releaseLinks.page}>ZAMM version {releaseVersion}</a>
+        : `ZAMM version ${releaseVersion}`
+      }, as well as other topics of interest to me.
       {nestedHeadings.length > 0 && <span>Feel free to jump directly to a given topic:</span>}
       <ul>
         {
@@ -77,25 +81,20 @@ const blogPostLink = `/blog/${versionSlug(release)}`;
     </nav>
   }
 
-  {releaseLinks &&
+  {releaseLinks?.installers &&
     <div>
       <hr />
 
-      Download <a href={releaseLinks.page}>ZAMM v{releaseVersion}</a> {linkBlogPost &&
-        <span>
-          &ndash; <a href={blogPostLink}>{blogPostTitle}</a>
-        </span>
-      } for:
-
+      <span>Download for:</span>
       <ul>
         <li>
-          Windows: <a href={releaseLinks.windowsExe} download>exe</a> / <a href={releaseLinks.windowsMsi} download>msi</a>
+          Windows: <a href={releaseLinks.installers.windowsExe} download>exe</a> / <a href={releaseLinks.installers.windowsMsi} download>msi</a>
         </li>
         <li>
-          Mac: <a href={releaseLinks.macDmg} download>dmg</a>
+          Mac: <a href={releaseLinks.installers.macDmg} download>dmg</a>
         </li>
         <li>
-          Linux: <a href={releaseLinks.linuxAppImage} download>AppImage</a> / <a href={releaseLinks.linuxDeb} download>deb</a>
+          Linux: <a href={releaseLinks.installers.linuxAppImage} download>AppImage</a> / <a href={releaseLinks.installers.linuxDeb} download>deb</a>
         </li>
       </ul>
     </div>
