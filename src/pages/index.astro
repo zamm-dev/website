@@ -13,7 +13,7 @@ const latestPost = blogPosts.sort((a, b) => {
 	const bVersion = b.data.zammVersion.split('.').map(Number);
 	return bVersion[0] - aVersion[0] || bVersion[1] - aVersion[1] || bVersion[2] - aVersion[2];
 })[0];
-const latestPostLink = `/blog/${versionSlug(latestPost.data)}`;
+const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 ---
 
 <!doctype html>
