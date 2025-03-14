@@ -15,6 +15,7 @@ export type ReleaseLinks = z.infer<typeof ReleaseLinksSchema>;
 
 export const DiscussionLinksSchema = z.object({
 	hackerNews: z.string().optional(),
+	lemmy: z.string().optional(),
 });
 
 export type DiscussionLinks = z.infer<typeof DiscussionLinksSchema>;

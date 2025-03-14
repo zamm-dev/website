@@ -5,13 +5,20 @@ type Props = DiscussionLinks | undefined;
 
 const {
   hackerNews: hackerNewsLink,
+  lemmy: lemmyLink,
 } = Astro.props ?? {};
 
 ---
 
 <div class="discussion-container">
-  {hackerNewsLink &&
-      <p>Discuss on <a href={hackerNewsLink}>HN</a> or below:</p>
+  {(hackerNewsLink || lemmyLink) &&
+    <p>
+      Discuss on
+      {hackerNewsLink && <a href={hackerNewsLink}>HN</a>}
+      {hackerNewsLink && lemmyLink && ", "}
+      {lemmyLink && <a href={lemmyLink}>Lemmy</a>}
+      {" or below:"}
+    </p>
   }
   <div id="remark42"></div>
 </div>
