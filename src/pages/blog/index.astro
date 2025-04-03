@@ -52,7 +52,7 @@ const posts = (await getCollection('blog')).sort(
 			}
 			ul li h4 .version {
 				font-size: 0.8em;
-				color: rgb(var(--gray));
+				color: var(--gray);
 			}
 			.title {
 				margin: 0;
@@ -62,7 +62,7 @@ const posts = (await getCollection('blog')).sort(
 			}
 			.date {
 				margin: 0;
-				color: rgb(var(--gray));
+				color: var(--gray);
 			}
 			ul li a:hover h4,
 			ul li a:hover .date {

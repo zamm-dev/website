@@ -12,7 +12,7 @@ const digestibleUrl = `/blog/digestibles/${digestibleSlug(version, title)}/`;
 
 <div class="digestible">
   Digestible: 
-  <a href={digestibleUrl} class="digestible-link">
+  <a href={digestibleUrl}>
     {title}
   </a>
 </div>
@@ -20,18 +20,18 @@ const digestibleUrl = `/blog/digestibles/${digestibleSlug(version, title)}/`;
 <style>
   .digestible {
     margin: 1rem 0 0.5rem;
-    background-color: var(--info-bg);
+    background-color: var(--subtle-info-bg);
     border-radius: 0.5rem;
     font-family: var(--sans-serif);
-    font-size: 14px;
+    font-size: 16px;
     padding: 0 0 0 1rem;
   }
 
-  .digestible-link {
-    color: #1890ff;
+  .digestible a {
+    color: var(--accent-dark);
   }
 
-  .digestible-link:hover {
+  .digestible a:hover {
     text-decoration: underline;
   }
 </style>

@@ -5,16 +5,30 @@
  */
 
 :root {
-	--accent: #4d5bff;
-	--accent-dark: #000d8a;
-	--info-bg: #add8e667;
+	--background-color: #EEEDE6;
+	--gray-gradient: to bottom, hsla(20,27%,80%, 0.3) 0%, var(--background-color) 600px;
+	/* prose links */
+	--accent: #947b58;
+	--accent-dark:hsl(49, 50%, 33%);
+	/* release links */
+	--info-bg: #634739;
+	--info-text: rgba(255, 255, 255, 0.8);
+	--info-link: hsl(42, 80%, 50%);
+	/* digestible links */
+	/* background-color, but darker */
+	--subtle-info-bg: hsl(53, 19%, 85%);
+	/* info-bg, but darker */
+	--code-bg: hsl(20, 26.90%, 25%);
 	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
+	--gray: rgb(146, 137, 169);
 	--gray-light: 229, 233, 240;
 	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
-		0 16px 32px rgba(var(--gray), 33%);
+	--image-shadow: 0 0px 2px rgba(99, 71, 57, 0.5);
+	--box-shadow-values: 99, 71, 57;
+	--box-shadow:
+		0 2px 6px rgba(var(--box-shadow-values), 25%),
+		0 8px 24px rgba(var(--box-shadow-values), 33%),
+		0 16px 32px rgba(var(--box-shadow-values), 33%);
 	--sans-serif: 'Atkinson', 'Nokora', sans-serif;
 }
 @font-face {
@@ -80,11 +94,11 @@
 
 body {
 	font-family: var(--sans-serif);
+	min-height: 100vh;
 	margin: 0;
 	padding: 0;
 	text-align: left;
 	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	color: rgb(var(--gray-dark));
@@ -163,7 +177,7 @@ h1 {
 	font-size: 3.052em;
 }
 h2 {
-	font-size: 2.441em;
+	font-size: 2em;
 }
 h3 {
 	font-size: 1.953em;
@@ -209,20 +223,17 @@ img {
 	margin: 0 auto;
 	display: block;
 }
-.prose img {
-	/* -20px because of the extra bottom margin from <p> elements */
-	margin-top: -20px;
-}
 video {
 	border-radius: 8px;
 }
 code {
 	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
+	background-color: var(--subtle-info-bg);
 	border-radius: 4px;
 	font-size: 18px;
 }
-pre {
+pre.astro-code.github-dark {
+	background-color: var(--code-bg) !important;
 	white-space: pre-wrap;
 	text-align: left;
 	font-size: 16px;
@@ -250,6 +261,90 @@ hr {
 	}
 	main {
 		padding: 1em;
+	}
+}
+
+.release-container, .blog-link {
+	background-color: var(--info-bg);
+	color: var(--info-text);
+	padding: 2rem;
+	margin-bottom: 2rem;
+	border-radius: 0.75rem;
+}
+
+.release-container a, .blog-link a {
+	color: var(--info-link);
+}
+
+.title {
+	max-width: 1020px;
+	margin: 0 auto 1em;
+	padding: 0;
+	text-align: center;
+	line-height: 1;
+}
+.title h1 {
+	margin: 0 0 0.5em 0;
+	text-align: center;
+	font-family: 'EB Garamond', serif;
+}
+.title h1 .version {
+	font-size: 0.8em;
+	color: var(--gray);
+	font-family: 'Atkinson', 'Nokora', sans-serif;
+}
+
+.dates {
+	margin: 0 auto 0.5em;
+	color: var(--gray);
+	width: fit-content;
+}
+.dates td {
+	text-align: right;
+	padding: 0 0.25rem;
+}
+.dates td.date {
+	text-align: left;
+}
+.dates a {
+	color: var(--gray);
+}
+
+.prose {
+	text-align: justify;
+	font-family: 'EB Garamond', 'Battambang', serif;
+	font-size: 26px;
+	line-height: 140%;
+}
+.prose img {
+	/* -20px because of the extra bottom margin from <p> elements */
+	margin-top: -20px;
+}
+.prose video {
+	margin: -20px auto 0;
+	display: block;
+}
+.prose img, .prose video {
+	box-shadow: var(--image-shadow);
+}
+.prose a {
+	color: var(--accent-dark);
+}
+
+@media (max-width: 480px) {
+	.release-container, .blog-link {
+		padding: 1.25rem;
+		font-size: 18px;
+	}
+	.title h1 {
+		font-size: 35px;
+	}
+	.title h1 .version {
+		display: block;
+	}
+	.prose {
+		text-align: left;
+		font-size: 22px;
 	}
 }
 
