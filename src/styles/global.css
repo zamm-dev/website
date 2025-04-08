@@ -5,11 +5,14 @@
  */
 
 :root {
-	--background-color: #EEEDE6;
+	--background-color:#EEEDE6;
+	--navbar-color: hsl(53, 19.00%, 95%);
 	--gray-gradient: to bottom, hsla(20,27%,80%, 0.3) 0%, var(--background-color) 600px;
 	/* prose links */
 	--accent: #947b58;
-	--accent-dark:hsl(49, 50%, 33%);
+	--accent-light:hsl(35, 25.40%, 70%); /* navbar hover highlight */
+	--accent-dark:hsl(49, 50%, 33%); /* digestible links */
+	--accent-darker:hsl(49, 50%, 20%); /* ZAMM "logo" */
 	/* release links */
 	--info-bg: #634739;
 	--info-text: rgba(255, 255, 255, 0.8);

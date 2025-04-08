@@ -22,13 +22,15 @@ import { SITE_TITLE } from '../consts';
 	header {
 		margin: 0;
 		padding: 0 1em;
-		background: white;
+		background: var(--navbar-color);
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
+		border-radius: 0 0 1em 1em;
 	}
 	h2 {
 		margin: 0;
-		font-size: 1em;
+		font-size: 1.5em;
 		font-family: 'Nasalization', Arial, Helvetica, sans-serif;
+		color: var(--accent-darker);
 	}
 
 	h2 a,
@@ -47,8 +49,31 @@ import { SITE_TITLE } from '../consts';
 		border-bottom: 4px solid transparent;
 		text-decoration: none;
 	}
-	nav a.active {
-		text-decoration: none;
+	@property --start-color {
+		syntax: '<color>';
+		initial-value: blue;
+		inherits: false;
+	}
+	@property --end-color {
+		syntax: '<color>';
+		initial-value: red;
+		inherits: false;
+	}
+	nav .internal-links a {
+		--start-color: var(--navbar-color);
+		--end-color: var(--navbar-color);
+		background: linear-gradient(to bottom, var(--start-color), var(--end-color)) no-repeat;
+		transition:
+			--start-color 0.3s ease-in-out,
+			--end-color 0.3s ease-in-out,
+			border-bottom-color 0.3s ease-in-out;
+	}
+	nav .internal-links a:hover {
+		border-bottom-color: var(--accent-light);
+		--end-color: hsl(35, 25.40%, 90%);
+	}
+	nav a.active, nav .internal-links a.active:hover {
+		--end-color: var(--navbar-color);
 		border-bottom-color: var(--accent);
 	}
 	.social-container :global(.social-links) {
