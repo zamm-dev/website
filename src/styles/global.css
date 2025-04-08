@@ -16,7 +16,7 @@
 	/* release links */
 	--info-bg: #634739;
 	--info-text: rgba(255, 255, 255, 0.8);
-	--info-link: hsl(42, 80%, 50%);
+	--info-link: hsl(42, 80%, 50%); /* also highlight on blog posts index page */
 	/* digestible links */
 	/* background-color, but darker */
 	--subtle-info-bg: hsl(53, 19%, 85%);
