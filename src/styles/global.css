@@ -5,8 +5,8 @@
  */
 
 :root {
-	--background-color:#EEEDE6;
-	--navbar-color: hsl(53, 19.00%, 95%);
+	--background-color: hsl(53, 19.00%, 97%);
+	--navbar-color: var(--background-color);
 	--gray-gradient: to bottom, hsla(20,27%,80%, 0.3) 0%, var(--background-color) 600px;
 	/* prose links */
 	--accent: #947b58;
