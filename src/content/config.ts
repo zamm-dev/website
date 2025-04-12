@@ -36,7 +36,6 @@ export type BlogPost = z.infer<typeof BlogSchema>;
 
 const blog = defineCollection({
 	type: 'content',
-	// Type-check frontmatter using a schema
 	schema: BlogSchema,
 });
 

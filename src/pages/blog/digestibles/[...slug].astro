@@ -10,7 +10,7 @@ export async function getStaticPaths() {
 	return await Promise.all(
 		digestibles.map(async (digestible) => {
 			const renderedData = await digestible.render();
-			const blogPost = await getEntry('blog', digestible.data.blogPost.slug);
+			const blogPost = await getEntry('blog', digestible.data.blogPost.id);
 			
 			if (!blogPost) {
 				throw new Error(`Blog post not found for digestible: ${digestible.data.title}`);
