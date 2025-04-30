@@ -333,6 +333,9 @@ hr {
 .prose a {
 	color: var(--accent-dark);
 }
+.prose p:has(+ol) {
+	margin-bottom: 0;
+}
 
 @media (max-width: 480px) {
 	.release-container, .blog-link {
