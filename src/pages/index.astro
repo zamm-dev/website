@@ -21,23 +21,107 @@ const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			h1 {
-				text-align: center;
+			main {
+				display: flex;
+				flex-direction: row;
+				gap: 2rem;
+				width: 100%;
+				align-items: center;
+				justify-content: center;
+			}
+
+			main .zamm {
 				font-family: 'Nasalization', Arial, Helvetica, sans-serif;
+				flex-basis: 50%;
+			}
+
+			.zamm table {
+				width: 1px;
+				table-layout: auto;
+				margin: 0 auto;
+			}
+
+			.zamm td.initial {
+				font-size: 3rem;
+				line-height: 3rem;
+				font-weight: bold;
+				color: var(--info-link);
+				text-align: right;
+			}
+
+			.zamm td.word {
+				font-size: 1.35rem;
+				line-height: 1.85rem;
+				text-transform: uppercase;
+				text-align: left;
+				vertical-align: bottom;
+				white-space: nowrap;
+			}
+
+			.zamm td.word span {
+				text-transform: lowercase;
+				color: var(--gray);
+			}
+
+			.content {
+				flex-basis: 50%;
 			}
 
 			p {
 				text-align: left;
 				font-family: 'Good Timing', Arial, Helvetica, sans-serif;
 			}
+
+			@media (max-width: 800px) {
+				main {
+					flex-direction: column;
+					gap: 0;
+				}
+
+				main .zamm {
+					flex-basis: auto;
+					margin: 2rem 0;
+				}
+
+				.zamm td.initial {
+					font-size: 2.5rem;
+					line-height: 2.5rem;
+				}
+
+				.zamm td.word {
+					font-size: 1.2rem;
+					line-height: 1.7rem;
+				}
+			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>ZAMM</h1>
-			<p>Hi, I'm Amos! This is a blog documenting my exploration of AI automation and other topics I want to record my thoughts on. If you want to know me, my most personal piece of writing has been <a href="/blog/v1.0.0/"><em>The Ceremony</em></a>.</p>
-			<p>Check out my latest post: <a href={latestPostLink}>ZAMM v{latestPost.data.zammVersion} &ndash; {latestPost.data.title}</a>.</p>
+			<div class="zamm">
+				<table>
+					<tr>
+						<td class="initial">Z</td>
+						<td class="word">en<span> and the</span></td>
+					</tr>
+					<tr>
+						<td class="initial">A</td>
+						<td class="word">utomation<span> of</span></td>
+					</tr>
+					<tr>
+						<td class="initial">M</td>
+						<td class="word">etaprogramming<span> for the</span></td>
+					</tr>
+					<tr>
+						<td class="initial">M</td>
+						<td class="word">asses</td>
+					</tr>
+				</table>
+			</div>
+			<div class="content">
+				<p>Hi, I'm Amos! This is a blog documenting my journey through life, starting from my exploration of AI automation. If you want to know me, my most personal piece of writing has been <a href="/blog/v1.0.0/"><em>The Ceremony</em></a>.</p>
+				<p>Check out my latest post: <a href={latestPostLink}>ZAMM v{latestPost.data.zammVersion} &ndash; {latestPost.data.title}</a>.</p>
+			</div>
 		</main>
 		<Footer />
 	</body>
