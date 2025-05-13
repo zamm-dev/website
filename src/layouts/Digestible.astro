@@ -21,12 +21,13 @@ const {
 
 const zammVersion = blogPost.data.zammVersion;
 const fullTitle = title;
+const descriptionText = description ?? `Digestible portion of blog post for v${zammVersion}`;
 const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/content/digestibles/${digestibleSlug(zammVersion, title)}.mdx`;
 ---
 
 <html lang="en">
 	<head>
-		<BaseHead title={fullTitle} description={description} />
+		<BaseHead title={fullTitle} description={descriptionText} />
 		<style>
 			main {
 				width: calc(100% - 2em);

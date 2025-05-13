@@ -15,12 +15,13 @@ const {
 	zammVersion, title, description, pubDate, updatedDate, heroImage, headings,
 } = data;
 const fullTitle = `v${zammVersion} - ${title}`;
+const descriptionText = description ?? `Blog post for v${zammVersion}`;
 const postHistoryUrl = `https://github.com/zamm-dev/website/commits/main/src/content/blog/v${zammVersion}.mdx`;
 ---
 
 <html lang="en">
 	<head>
-		<BaseHead title={fullTitle} description={description} image={heroImage} />
+		<BaseHead title={fullTitle} description={descriptionText} image={heroImage} />
 		<style>
 			main {
 				width: calc(100% - 2em);
