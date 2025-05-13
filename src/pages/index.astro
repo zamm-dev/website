@@ -119,8 +119,8 @@ const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 				</table>
 			</div>
 			<div class="content">
-				<p>Hi, I'm Amos! This is a blog documenting my journey through life, starting from my exploration of AI automation. If you want to know me, my most personal piece of writing has been <a href="/blog/v1.0.0/"><em>The Ceremony</em></a>.</p>
-				<p>Check out my latest post: <a href={latestPostLink}>ZAMM v{latestPost.data.zammVersion} &ndash; {latestPost.data.title}</a>.</p>
+				<p>Hi, I'm Amos! This is a blog documenting my journey through life, starting from my exploration of AI automation. It is named after <a href="https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance">the original ZAMM</a>.</p>
+				<p>If you want to know me, my most personal piece of writing has been <a href="/blog/v1.0.0/"><em>The Ceremony</em></a>. My latest post is <a href={latestPostLink}>ZAMM v{latestPost.data.zammVersion} &ndash; <em>{latestPost.data.title}</em></a>.</p>
 			</div>
 		</main>
 		<Footer />
