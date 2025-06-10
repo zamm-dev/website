@@ -12,6 +12,16 @@ import { SITE_TITLE } from '../consts';
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
+
+		<div class="dropdown">
+			<div class="display">≡</div>
+			<div class="dropdown-links">
+				<HeaderLink href="/">Home</HeaderLink>
+				<HeaderLink href="/blog">Blog</HeaderLink>
+				<HeaderLink href="/about">About</HeaderLink>
+			</div>
+		</div>
+
 		<div class="social-container">
 			<SocialLinks />
 		</div>
@@ -26,9 +36,57 @@ import { SITE_TITLE } from '../consts';
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
 		border-radius: 0 0 1em 1em;
 	}
+	.dropdown {
+		display: none;
+		position: relative;
+	}
+	.dropdown .display {
+		font-size: 2em;
+		padding-right: 0.5em;
+	}
+	.dropdown-links {
+			display: none;
+			position: absolute;
+			top: 100%;
+			right: 0;
+			background: var(--navbar-dropdown-color);
+			backdrop-filter: blur(10px);
+			border-radius: 3px;
+			box-shadow: 0 4px 8px rgba(var(--black), 50%);
+		}
+		.dropdown-links a {
+			display: block;
+			padding: 0.5em 1em;
+			color: var(--black);
+			text-decoration: none;
+		}
+		.dropdown-links a {
+			border-left: 4px solid transparent;
+			border-bottom: none;
+			transition: background-color 0.3s ease-in-out;
+		}
+		.dropdown-links a:hover {
+			background-color: var(--navbar-dropdown-highlight);
+		}
+		.dropdown-links a.active {
+			border-left-color: var(--accent);
+		}
 	@media (max-width: 500px) {
 		header {
 			margin: 0;
+		}
+
+		.internal-links {
+			display: none;
+		}
+
+		.dropdown {
+			display: block;
+			cursor: pointer;
+		}
+
+		.dropdown:hover .dropdown-links {
+			display: block;
 		}
 	}
 	h2 {
@@ -79,7 +137,7 @@ import { SITE_TITLE } from '../consts';
 		border-bottom-color: var(--accent-light);
 		--end-color: hsl(35, 25.40%, 90%);
 	}
-	nav a.active, nav .internal-links a.active:hover {
+	nav .internal-links .active, nav .internal-links a.active:hover {
 		--end-color: var(--navbar-color);
 		border-bottom-color: var(--accent);
 	}

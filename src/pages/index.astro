@@ -67,9 +67,18 @@ const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 				flex-basis: 50%;
 			}
 
-			p {
+			p, ul {
 				text-align: left;
 				font-family: 'Good Timing', Arial, Helvetica, sans-serif;
+			}
+
+			ul {
+				padding-left: 1em;
+				list-style-type: "\22b1";
+			}
+
+			li {
+				padding-left: 0.5em;
 			}
 
 			@media (max-width: 800px) {
@@ -120,7 +129,11 @@ const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 			</div>
 			<div class="content">
 				<p>Hi, I'm Amos! This is a blog documenting my journey through life, starting from my exploration of AI automation. It is named after <a href="https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance">the original ZAMM</a>.</p>
-				<p>If you want to know me, my most personal piece of writing has been <a href="/blog/v1.0.0/"><em>The Ceremony</em></a>. My latest post is <a href={latestPostLink}>ZAMM v{latestPost.data.zammVersion} &ndash; <em>{latestPost.data.title}</em></a>.</p>
+				<ul>
+						<li>My most personal piece of writing has been <a href="/blog/v1.0.0/"><em>The Ceremony</em></a></li>
+						<li>My current approach to life is documented in my <a href="/posts/v1.1.0/fml-amos-2025-06.pdf">personal field manual</a></li>
+						<li>My latest post is <a href={latestPostLink}>ZAMM v{latestPost.data.zammVersion} &ndash; <em>{latestPost.data.title}</em></a></li>
+					</ul>
 			</div>
 		</main>
 		<Footer />

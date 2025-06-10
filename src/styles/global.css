@@ -7,6 +7,8 @@
 :root {
 	--background-color: hsl(53, 19.00%, 97%);
 	--navbar-color: var(--background-color);
+	--navbar-dropdown-color: hsla(53, 19.00%, 97%, 70%);
+	--navbar-dropdown-highlight: hsla(35, 25.40%, 70%, 15%); /* var(--accent-light) with transparency */
 	--gray-gradient: to bottom, hsla(20,27%,80%, 0.3) 0%, var(--background-color) 600px;
 	/* prose links */
 	--accent: #947b58;
