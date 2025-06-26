@@ -3,6 +3,7 @@ zammVersion: '0.1.5'
 title: 'Odds and ends'
 description: 'Small tweaks only.'
 pubDate: 'August 15, 2024'
+updatedDate: 'June 27, 2025'
 heroImage: '/posts/v0.1.5/data-import-export.png'
 releaseLinks:
   page: https://github.com/zamm-dev/zamm/releases/tag/v0.1.5
@@ -191,6 +192,12 @@ instead of like this, the way I'm used to it being written:
 <img src="/posts/v0.1.5/mondulkiri-preferred-njung.png" alt="Mondulkiri rendering the word អ៊ីចឹង another way" />
 
 This is another one of those Khmer alphabet things where [the squiggly symbol ៊](https://en.wiktionary.org/wiki/៊) is usually placed on top of consonants, but sometimes it's placed under them instead when there are other diacritics on top. For example, add [a hat ី](https://en.wiktionary.org/wiki/ី) to <span class="khmer">ស៊</span> and it becomes <span class="khmer">ស៊ី</span>. But it turns out for the letter <span class="khmer">អ</span>, [*both* ways](https://www.facebook.com/100063584292167/posts/257649412807005/) of writing <span class="khmer">អ៊ី</span> are correct. Phew, I can finally end my font journey in peace!
+
+I eventually found out from my Khmer teacher that <span class="khmer">ញ៉ាំ</span> can be rendered correctly on the Mac after all, you just have to input it incorrectly as <span class="khmer">ញ៊ាំ</span> to do so:
+
+<img src="/posts/v0.1.5/nham-wrong.png" alt="ញ៊ាំ" />
+
+Which of course means that what you've written will look wrong to everyone not using an Apple device. God, what a mess.
 
 Perhaps this experience can partially be chalked up to Apple's [historically poor support](https://discussions.apple.com/thread/4480912?sortBy=rank) for Khmer. After all, the Mac still doesn't have built-in support for the standardized [NiDA keyboard layout](https://en.wikipedia.org/wiki/Khmer_keyboard#Genesis_of_the_Khmer_Unicode); you'll have to install the third-party [Keyman keyboard](https://keyman.com/keyboards/khmer_angkor) instead. But to be fair, Keyman [solves](https://marc.durdin.net/2018/03/the-case-for-keyman/) a number of Khmer typing problems that are also present on other operating systems, and this was also specifically a problem with Qt6 *and* Mac OS *and* certain Khmer fonts.
 
