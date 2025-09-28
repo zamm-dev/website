@@ -17,6 +17,8 @@ discussions:
   hackerNews: https://news.ycombinator.com/item?id=42557718
 ---
 
+import DigestibleLink from '../../components/DigestibleLink.astro';
+
 ## Release notes
 
 ZAMM can now display a list of all previous terminal sessions. It can also successfully export and import terminal sessions, and handles enough Windows escape codes to properly render the output of `cmd` and `dir`:
@@ -204,6 +206,8 @@ In other words: if you're building a foundation for others to use, it doesn't ma
 While this is why migrations can be a bit annoying, I also appreciate that it offers me a chance to think more clearly and clarify what I wish for the code to do. I had previously thought of [bit rot](/blog/v0.1.1/) only as decay, and I had learned to not mind the analogous gardening quite as much. But now I see that repotting actually brings with it opportunities for the software organism to better state its needs to its dependencies.
 
 ## The future of ZAMM
+
+<DigestibleLink version="0.2.1" title="The future of ZAMM" />
 
 This is perhaps the first bug in ZAMM that was unambiguously caught by automated testing, that I would not have discovered otherwise for quite a while. I never use that part of the app after initial setup, and even then it would've been unlikely for me to try to completely clear the file path first instead of simply editing the existing one or pasting a new one in.
 
