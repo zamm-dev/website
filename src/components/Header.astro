@@ -1,7 +1,7 @@
 ---
-import HeaderLink from './HeaderLink.astro';
-import SocialLinks from './SocialLinks.astro';
-import { SITE_TITLE } from '../consts';
+import HeaderLink from "./HeaderLink.astro";
+import SocialLinks from "./SocialLinks.astro";
+import { SITE_TITLE } from "../consts";
 ---
 
 <header>
@@ -9,6 +9,7 @@ import { SITE_TITLE } from '../consts';
 		<h2><a href="/">{SITE_TITLE}</a></h2>
 		<div class="internal-links">
 			<HeaderLink href="/">Home</HeaderLink>
+			<HeaderLink href="/now">Now</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
@@ -45,32 +46,32 @@ import { SITE_TITLE } from '../consts';
 		padding-right: 0.5em;
 	}
 	.dropdown-links {
-			display: none;
-			position: absolute;
-			top: 100%;
-			right: 0;
-			background: var(--navbar-dropdown-color);
-			backdrop-filter: blur(10px);
-			border-radius: 3px;
-			box-shadow: 0 4px 8px rgba(var(--black), 50%);
-		}
-		.dropdown-links a {
-			display: block;
-			padding: 0.5em 1em;
-			color: var(--black);
-			text-decoration: none;
-		}
-		.dropdown-links a {
-			border-left: 4px solid transparent;
-			border-bottom: none;
-			transition: background-color 0.3s ease-in-out;
-		}
-		.dropdown-links a:hover {
-			background-color: var(--navbar-dropdown-highlight);
-		}
-		.dropdown-links a.active {
-			border-left-color: var(--accent);
-		}
+		display: none;
+		position: absolute;
+		top: 100%;
+		right: 0;
+		background: var(--navbar-dropdown-color);
+		backdrop-filter: blur(10px);
+		border-radius: 3px;
+		box-shadow: 0 4px 8px rgba(var(--black), 50%);
+	}
+	.dropdown-links a {
+		display: block;
+		padding: 0.5em 1em;
+		color: var(--black);
+		text-decoration: none;
+	}
+	.dropdown-links a {
+		border-left: 4px solid transparent;
+		border-bottom: none;
+		transition: background-color 0.3s ease-in-out;
+	}
+	.dropdown-links a:hover {
+		background-color: var(--navbar-dropdown-highlight);
+	}
+	.dropdown-links a.active {
+		border-left-color: var(--accent);
+	}
 	@media (max-width: 500px) {
 		header {
 			margin: 0;
@@ -91,7 +92,7 @@ import { SITE_TITLE } from '../consts';
 	}
 	h2 {
 		margin: 0;
-		font-family: 'Nasalization', Arial, Helvetica, sans-serif;
+		font-family: "Nasalization", Arial, Helvetica, sans-serif;
 		color: var(--accent-darker);
 	}
 
@@ -103,21 +104,22 @@ import { SITE_TITLE } from '../consts';
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		font-family: 'Good Timing', Arial, Helvetica, sans-serif;
+		font-family: "Good Timing", Arial, Helvetica, sans-serif;
 	}
-	nav a, .social-container :global(.social-links a) {
+	nav a,
+	.social-container :global(.social-links a) {
 		padding: 1em 0.75em;
 		color: var(--black);
 		border-bottom: 4px solid transparent;
 		text-decoration: none;
 	}
 	@property --start-color {
-		syntax: '<color>';
+		syntax: "<color>";
 		initial-value: blue;
 		inherits: false;
 	}
 	@property --end-color {
-		syntax: '<color>';
+		syntax: "<color>";
 		initial-value: red;
 		inherits: false;
 	}
@@ -127,7 +129,8 @@ import { SITE_TITLE } from '../consts';
 		/* https://stackoverflow.com/a/9555285 */
 		float: left;
 		clear: none;
-		background: linear-gradient(to bottom, var(--start-color), var(--end-color)) no-repeat;
+		background: linear-gradient(to bottom, var(--start-color), var(--end-color))
+			no-repeat;
 		transition:
 			--start-color 0.3s ease-in-out,
 			--end-color 0.3s ease-in-out,
@@ -135,9 +138,10 @@ import { SITE_TITLE } from '../consts';
 	}
 	nav .internal-links a:hover {
 		border-bottom-color: var(--accent-light);
-		--end-color: hsl(35, 25.40%, 90%);
+		--end-color: hsl(35, 25.4%, 90%);
 	}
-	nav .internal-links .active, nav .internal-links a.active:hover {
+	nav .internal-links .active,
+	nav .internal-links a.active:hover {
 		--end-color: var(--navbar-color);
 		border-bottom-color: var(--accent);
 	}

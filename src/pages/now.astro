@@ -1,0 +1,62 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_DESCRIPTION } from "../consts";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="What I'm Doing Now" description={SITE_DESCRIPTION} />
+		<style>
+			h1 {
+				font-family: "Nasalization", Arial, Helvetica, sans-serif;
+				color: var(--accent-darker);
+				font-weight: 400;
+			}
+
+			h2 {
+				font-family: "Nasalization", Arial, Helvetica, sans-serif;
+				margin-top: 2rem;
+			}
+
+			main p,
+			ul {
+				font-family: "EB Garamond", "Battambang", serif;
+				font-size: 26px;
+			}
+
+			ul {
+				line-height: 1.8;
+			}
+
+			main p.updated {
+				font-family: "Good Timing", Arial, Helvetica, sans-serif;
+				color: var(--gray);
+				font-size: 20px;
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Me Now</h1>
+			<p class="updated">Or at least, me as of October 2025</p>
+
+			<p style="margin-top: 2rem;">
+				I'm <a
+					href="https://nownownow.com/about"
+					target="_blank"
+					rel="noopener noreferrer">currently</a
+				> enjoying mid-life retirement in Siem Reap (Cambodia), where I go jogging
+				at Angkor Wat every weekend. I'm still checking out the latest advances in AI coding every now and then, but lately I've been more focused on meditation, tai chi,
+				cooking, and generally <a href="/posts/v1.2.0/fml-amos-2025-09.pdf"
+					>figuring out</a
+				> how it is that I operate myself.
+			</p>
+		</main>
+		<Footer />
+	</body>
+</html>
