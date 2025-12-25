@@ -1,17 +1,21 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import versionSlug from '../lib/versionSlug';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import versionSlug from "../lib/versionSlug";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 import { getCollection } from "astro:content";
 
 const blogPosts = await getCollection("blog");
 // find latest blog post
 const latestPost = blogPosts.sort((a, b) => {
-	const aVersion = a.data.zammVersion.split('.').map(Number);
-	const bVersion = b.data.zammVersion.split('.').map(Number);
-	return bVersion[0] - aVersion[0] || bVersion[1] - aVersion[1] || bVersion[2] - aVersion[2];
+	const aVersion = a.data.zammVersion.split(".").map(Number);
+	const bVersion = b.data.zammVersion.split(".").map(Number);
+	return (
+		bVersion[0] - aVersion[0] ||
+		bVersion[1] - aVersion[1] ||
+		bVersion[2] - aVersion[2]
+	);
 })[0];
 const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 ---
@@ -31,7 +35,7 @@ const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 			}
 
 			main .zamm {
-				font-family: 'Nasalization', Arial, Helvetica, sans-serif;
+				font-family: "Nasalization", Arial, Helvetica, sans-serif;
 				flex-basis: 50%;
 			}
 
@@ -67,9 +71,10 @@ const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 				flex-basis: 50%;
 			}
 
-			p, ul {
+			p,
+			ul {
 				text-align: left;
-				font-family: 'Good Timing', Arial, Helvetica, sans-serif;
+				font-family: "Good Timing", Arial, Helvetica, sans-serif;
 			}
 
 			ul {
@@ -128,12 +133,32 @@ const latestPostLink = `/blog/${versionSlug(latestPost.data)}/`;
 				</table>
 			</div>
 			<div class="content">
-				<p>Hi, I'm Amos! This is a blog documenting the things I find interesting, which currently revolve around my life. Its acronym comes from <a href="https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance">the original ZAMM</a>, its name from my <a href="/blog/v0.1.0/">initial explorations</a> into automated coding.</p>
+				<p>
+					Hi, I'm Amos! This is the professional website for my personal LLC,
+					ZAMM Consulting, which is a backcronym for <a
+						href="https://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance"
+						>the original ZAMM</a
+					>.</p>
+					<p>
+						I <a href="/blog/v0.1.0/">started out</a> documenting my forays into automated coding and other topics I found interesting, including my personal life. Since then the professional has bled into the personal and the personal into the professional. I am fundamentally me no matter what role I play.
+				</p>
 				<ul>
-						<li>My most personal piece of writing has been <a href="/blog/v1.0.0/"><em>The Ceremony</em></a></li>
-						<li>You can see what I'm up to <a href="/now">these days</a> on my "now" page.</li>
-						<li>My latest post is <a href={latestPostLink}>ZAMM v{latestPost.data.zammVersion} &ndash; <em>{latestPost.data.title}</em></a></li>
-					</ul>
+					<li>
+						My most personal piece of writing has been <a href="/blog/v1.0.0/"
+							><em>The Ceremony</em></a
+						>
+					</li>
+					<li>
+						You can see what I'm up to <a href="/now">these days</a> on my "now" page.
+					</li>
+					<li>
+						My latest post is <a href={latestPostLink}
+							>ZAMM v{latestPost.data.zammVersion} &ndash; <em
+								>{latestPost.data.title}</em
+							></a
+						>
+					</li>
+				</ul>
 			</div>
 		</main>
 		<Footer />
