@@ -153,6 +153,11 @@ body {
 	src: url('/fonts/private/good_timing_bd.otf') format("opentype");
 }
 
+@font-face {
+	font-family: 'Noto Serif SC';
+	src: url('/fonts/NotoSerifSC-VariableFont.ttf') format("truetype");
+}
+
 .khmer {
 	font-size: 1em;
 }
@@ -320,7 +325,7 @@ hr {
 
 .prose {
 	text-align: justify;
-	font-family: 'EB Garamond', 'Battambang', serif;
+	font-family: 'EB Garamond', 'Battambang', 'Noto Serif SC', serif;
 	font-size: 26px;
 	line-height: 140%;
 }
