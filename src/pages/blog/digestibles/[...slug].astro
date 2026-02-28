@@ -4,14 +4,44 @@ import digestibleSlug from '../../../lib/digestibleSlug';
 import Digestible from '../../../layouts/Digestible.astro';
 import type { MarkdownHeading } from 'astro';
 
+const compactVersionId = /^v(\d)(\d)(\d+)$/;
+
+function toVersionTag(value: string) {
+	const match = value.match(compactVersionId);
+
+	if (!match) return value;
+
+	const [, major, minor, patch] = match;
+	return `v${major}.${minor}.${patch}`;
+}
+
 export async function getStaticPaths() {
 	const digestibles = await getCollection('digestibles');
+	const blogPosts = await getCollection('blog');
 	
 	return await Promise.all(
-		digestibles.map(async (digestible) => {
-			const renderedData = await digestible.render();
-			const blogPost = await getEntry('blog', digestible.data.blogPost.id);
-			
+			digestibles.map(async (digestible) => {
+				const renderedData = await digestible.render();
+				const blogPostRef = digestible.data.blogPost;
+				let blogPost = null;
+
+				if (typeof blogPostRef === 'string') {
+					blogPost = await getEntry('blog', blogPostRef);
+
+					if (!blogPost) {
+						blogPost = await getEntry('blog', toVersionTag(blogPostRef));
+					}
+				} else {
+					blogPost = await getEntry(blogPostRef);
+				}
+
+			if (!blogPost) {
+				const digestibleVersion = digestible.id.split('/')[0];
+				blogPost = blogPosts.find(
+					(post) => `v${post.data.zammVersion}` === digestibleVersion
+				) ?? null;
+			}
+
 			if (!blogPost) {
 				throw new Error(`Blog post not found for digestible: ${digestible.data.title}`);
 			}

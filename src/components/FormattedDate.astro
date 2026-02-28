@@ -1,14 +1,15 @@
 ---
 interface Props {
-	date: Date;
+	date: Date | string | number;
 }
 
 const { date } = Astro.props;
+const normalizedDate = date instanceof Date ? date : new Date(date);
 ---
 
-<time datetime={date.toISOString()}>
+<time datetime={normalizedDate.toISOString()}>
 	{
-		date.toLocaleDateString('en-us', {
+		normalizedDate.toLocaleDateString('en-us', {
 			year: 'numeric',
 			month: 'short',
 			day: 'numeric',
