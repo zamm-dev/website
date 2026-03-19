@@ -21,6 +21,10 @@ const {
 } = Astro.props;
 
 const nestedHeadings = headings?.reduce((acc, heading) => {
+  if (heading.slug === 'footnote-label' || heading.text === 'Footnotes') {
+    return acc;
+  }
+
   if (heading.depth === 2) {
     acc.push({
       slug: heading.slug,
