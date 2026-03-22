@@ -1,0 +1,67 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import BlogPostIndex from '../../../components/BlogPostIndex.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../../consts';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface Props {
+	posts: CollectionEntry<'blog'>[];
+	currentPage: number;
+	totalPages: number;
+}
+
+export async function getStaticPaths() {
+	const pageSize = 20;
+	const posts = (await getCollection('blog')).sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+	);
+	const totalPages = Math.ceil(posts.length / pageSize);
+
+	return Array.from({ length: Math.max(totalPages - 1, 0) }, (_, index) => {
+		const currentPage = index + 2;
+		const start = (currentPage - 1) * pageSize;
+		const end = start + pageSize;
+
+		return {
+			params: { page: String(currentPage) },
+			props: {
+				posts: posts.slice(start, end),
+				currentPage,
+				totalPages,
+			},
+		};
+	});
+}
+
+const { posts, currentPage, totalPages } = Astro.props;
+const title = `${SITE_TITLE} | Blog Page ${currentPage}`;
+const prevUrl = currentPage === 2 ? '/blog/' : `/blog/index/${currentPage - 1}/`;
+const nextUrl = currentPage < totalPages ? `/blog/index/${currentPage + 1}/` : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={SITE_DESCRIPTION} />
+		<style>
+			main {
+				width: 960px;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<BlogPostIndex
+				posts={posts}
+				currentPage={currentPage}
+				totalPages={totalPages}
+				prevUrl={prevUrl}
+				nextUrl={nextUrl}
+			/>
+		</main>
+		<Footer />
+	</body>
+</html>

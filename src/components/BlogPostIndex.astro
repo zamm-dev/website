@@ -1,0 +1,150 @@
+---
+import FormattedDate from './FormattedDate.astro';
+import versionSlug from '../lib/versionSlug';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	posts: CollectionEntry<'blog'>[];
+	currentPage: number;
+	totalPages: number;
+	prevUrl?: string;
+	nextUrl?: string;
+}
+
+const { posts, currentPage, totalPages, prevUrl, nextUrl } = Astro.props;
+---
+
+<section>
+	<ul>
+		{
+			posts.map((post) => (
+				<li>
+					<a href={`/blog/${versionSlug(post.data)}/`} class:list={[post.data.zammVersion.endsWith(".0.0") ? "milestone" : ""]}>
+						<h4 class="post-title">
+							<span class="version">v{post.data.zammVersion}: </span>
+							{post.data.title}
+						</h4>
+						<p class="date">
+							<FormattedDate date={post.data.pubDate} />
+						</p>
+					</a>
+				</li>
+			))
+		}
+	</ul>
+
+	{
+		totalPages > 1 && (
+			<nav class="pagination" aria-label="Blog pagination">
+				{prevUrl ? <a href={prevUrl}>← Newer posts</a> : <span aria-hidden="true" />}
+				<p>Page {currentPage} of {totalPages}</p>
+				{nextUrl ? <a href={nextUrl}>Older posts →</a> : <span aria-hidden="true" />}
+			</nav>
+		)
+	}
+</section>
+
+<style>
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+	ul li {
+		width: 100%;
+	}
+	ul li * {
+		text-decoration: none;
+		transition: 0.2s ease;
+	}
+	ul li a {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+		align-items: center;
+		padding: 12px 8px;
+		border-radius: 4px;
+	}
+	ul li h4 .version {
+		font-size: 0.8em;
+		color: var(--gray);
+	}
+	.post-title {
+		margin: 0;
+		color: rgb(var(--black));
+		line-height: 1;
+		flex: 1;
+	}
+	.date {
+		margin: 0;
+		color: var(--gray);
+	}
+	ul li a:hover {
+		background-color: var(--subtle-info-bg);
+	}
+	ul li a:hover h4 .version,
+	ul li a:hover h4,
+	ul li a:hover .date {
+		color: rgb(var(--accent));
+	}
+	ul li a.milestone .version, ul li a.milestone h4 {
+		color: var(--info-link);
+	}
+	.pagination {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 2rem;
+	}
+	.pagination a:last-child {
+		text-align: right;
+	}
+	.pagination p {
+		margin: 0;
+		color: var(--gray);
+	}
+	@media (max-width: 720px) {
+		ul {
+			gap: 0;
+		}
+		ul li {
+			width: 100%;
+		}
+		ul li a {
+			padding: 8px;
+			gap: 6px;
+			border-bottom: 1px dashed var(--gray);
+			border-radius: 0;
+		}
+		ul li:first-child a {
+			border-radius: 4px 4px 0 0;
+		}
+		ul li:last-child a {
+			border-bottom: none;
+			border-radius: 0 0 4px 4px;
+		}
+		ul li a p {
+			align-self: center;
+		}
+		ul li:first-child .post-title {
+			font-size: 1.563em;
+		}
+		.pagination {
+			grid-template-columns: 1fr;
+			justify-items: center;
+		}
+		.pagination a:last-child {
+			text-align: left;
+		}
+	}
+	@media (max-width: 500px) {
+		ul li a {
+			flex-direction: column;
+			gap: 6px;
+		}
+	}
+</style>

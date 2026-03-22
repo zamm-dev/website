@@ -4,12 +4,14 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
-import versionSlug from '../../lib/versionSlug';
+import BlogPostIndex from '../../components/BlogPostIndex.astro';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+const pageSize = 20;
+const totalPages = Math.ceil(posts.length / pageSize);
+const pagePosts = posts.slice(0, pageSize);
 ---
 
 <!doctype html>
@@ -19,87 +21,6 @@ const posts = (await getCollection('blog')).sort(
 		<style>
 			main {
 				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: 100%;
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li a {
-				display: flex;
-				flex-direction: row;
-				gap: 1rem;
-				align-items: center;
-				padding: 12px 8px;
-				border-radius: 4px;
-			}
-			ul li h4 .version {
-				font-size: 0.8em;
-				color: var(--gray);
-			}
-			.post-title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-				flex: 1;
-			}
-			.date {
-				margin: 0;
-				color: var(--gray);
-			}
-			ul li a:hover {
-				background-color: var(--subtle-info-bg);
-			}
-			ul li a:hover h4 .version,
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul li a.milestone .version, ul li a.milestone h4 {
-				color: var(--info-link);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0;
-				}
-				ul li {
-					width: 100%;
-				}
-				ul li a {
-					padding: 8px;
-					gap: 6px;
-					border-bottom: 1px dashed var(--gray);
-					border-radius: 0;
-				}
-				ul li:first-child a {
-					border-radius: 4px 4px 0 0;
-				}
-				ul li:last-child a {
-					border-bottom: none;
-					border-radius: 0 0 4px 4px;
-				}
-				ul li a p {
-					align-self: center;
-				}
-				ul li:first-child .post-title {
-					font-size: 1.563em;
-				}
-			}
-			@media (max-width: 500px) {
-				ul li a {
-					flex-direction: column;
-					gap: 6px;
-				}
 			}
 		</style>
 
@@ -112,25 +33,12 @@ const posts = (await getCollection('blog')).sort(
 	<body>
 		<Header />
 		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${versionSlug(post.data)}/`} class:list={[post.data.zammVersion.endsWith(".0.0") ? "milestone" : ""]}>
-									<h4 class="post-title">
-										<span class="version">v{post.data.zammVersion}: </span>
-										{post.data.title}
-									</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
+			<BlogPostIndex
+				posts={pagePosts}
+				currentPage={1}
+				totalPages={totalPages}
+				nextUrl={totalPages > 1 ? '/blog/index/2/' : undefined}
+			/>
 		</main>
 		<Footer />
 	</body>
