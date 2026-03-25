@@ -219,6 +219,46 @@ p {
 .prose p {
 	margin-bottom: 1.5em;
 }
+.prose sup[data-footnote-ref] {
+	line-height: 0;
+}
+.prose sup[data-footnote-ref] a {
+	text-decoration: none;
+}
+.prose section[data-footnotes] {
+	position: relative;
+	margin: 3rem 2rem 0;
+	padding-top: 1.5rem;
+	font-size: 22px;
+	line-height: 1.8rem;
+}
+.prose section[data-footnotes]::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -2rem;
+	right: -2rem;
+	border-top: 1px solid rgb(var(--gray-light));
+}
+.prose section[data-footnotes] h2 {
+	margin-bottom: 1rem;
+	font-size: 1rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.prose section[data-footnotes] ol {
+	padding-left: 1.5rem;
+}
+.prose section[data-footnotes] li {
+	margin-bottom: 1rem;
+}
+.prose section[data-footnotes] p {
+	margin: 2rem 0;
+}
+.prose a[data-footnote-backref] {
+	margin-left: 0.35rem;
+	text-decoration: none;
+}
 textarea {
 	width: 100%;
 	font-size: 16px;
