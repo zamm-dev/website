@@ -219,10 +219,17 @@ p {
 .prose p {
 	margin-bottom: 1.5em;
 }
-.prose sup[data-footnote-ref] {
+/* remark-gfm puts data-footnote-ref on the inner <a>, not the <sup>, so we
+   match via :has(). Default vertical-align: super grows the line box; using
+   position: relative + top raises the marker without affecting line height. */
+.prose sup:has(a[data-footnote-ref]) {
+	font-size: 0.75em;
 	line-height: 0;
+	vertical-align: baseline;
+	position: relative;
+	top: -0.5em;
 }
-.prose sup[data-footnote-ref] a {
+.prose sup a[data-footnote-ref] {
 	text-decoration: none;
 }
 .prose section[data-footnotes] {
