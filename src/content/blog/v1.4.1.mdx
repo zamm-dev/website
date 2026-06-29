@@ -1,0 +1,102 @@
+---
+zammVersion: '1.4.1'
+title: 'Rhymes'
+pubDate: 'June 29, 2026'
+---
+
+Like history, my life doesn't repeat itself, but [it does rhyme](https://quoteinvestigator.com/2014/01/12/history-rhymes/). As I approached the beginning of a [new high-stakes project](/blog/digestibles/v1.4.0/raising-the-stakes/), I feared that I would once again [be forcibly bound](/blog/digestibles/v0.1.6/self-theater/) to the procrastinatory inaction of the Odyssean ship mast.
+
+Instead, the exact opposite happened. I found myself zapped back into [a state of constant flow](/blog/v1.2.3/), glued to the screen in order to fully take in the deluge of PRs, AI completion reminders,[^ai] and Slack messages giving me nonstop dopamine hits as if this were the most exciting job simulator video game I'd ever played, except that it were real. I would forget to sleep until late into the night; I would've forgotten to eat too, if I hadn't been visiting family in Hong Kong.
+
+[^ai]: [Two years ago](/blog/v0.1.4/) I had wondered:
+
+    > \[E\]ven if my hopes about the current usefulness of LLMs were to fully pan out, my expectations around what counts as drudgery would likely reset due to the hedonic treadmill
+
+    On the one hand, software engineering is a *hell* of a lot more exciting than it was before. On the other hand, this would've sounded insane just a few years ago, but nowadays it really feels like drudgery to have to go through this entire checklist even for a minor change:
+
+        1. Kick off the process to setup a new worktree
+        2. Wait for the process to run `pnpm install`
+        3. `cd` to the new worktree
+        4. Tell "Claudex" about my idea
+        5. Check back on it after it finishes exploring the codebase, thinking, and doing everything
+        6. Verify that it did everything reasonably
+        7. Run the automated PR creation process
+        8. Wait for it to run through all the PR checks (the ones that you can't automate with regular code because it depends on judgement around adherence to repo standards)
+        9. Confirm its understanding of the PR title, description, and suggested reviewers
+        10. Wait for it to send the PR off
+        11. Remember to check on the approved PR a day or two later
+        12. `cd` to the right directory again
+        13. Kick off the automated PR review addressing process
+        14. Confirm its understanding and proposed resolution to the PR comments
+        15. Wait for it to send off the changes
+        16. Wait for CI to finish
+        17. Finally see the damn PR merged
+
+And when I returned back to Siem Reap, I fell through the cracks on *all* of my habits. Zero language learning, zero time spent on any hobbies, sleeping later and later every day -- I mean, I snapped *right* back into total dysfunctionality as soon as I arrived home. I was still meeting all my professional obligations just fine, but outside of work I was a complete mess for a couple of weeks.
+
+With these new data points, [a new model](/blog/digestibles/v1.1.2/vulnerability/) for explaining my behavior seems to fall into place:
+
+1. The project actually offered very frequent and very high dopamine rewards.
+2. This naturally dominated my life to that point where all other low-dopaminergic activities like meditation or even enjoying a simple meal felt intolerable.
+3. Once the intensity of the new project receded a bit, I found that my previous dysfunctionalities were back, and in more intense form, because the high dopaminergic tide had washed away with it all of my stabilizing habits.
+4. Once I lost access to the support network I had in Hong Kong, I found that my dysfunctionalities were fully uncovered with unmitigated consequences.
+     - This truly felt as rock-bottom as I could possibly be as the person I am today -- which is definitely still a much more competent person than I was a few years ago, but that reassuring rock-bottom feeling of "Okay, I know I can sink no further because I am literally operating on autopilot with zero willpower right now" was the same.
+5. I take a little while to adjust to external shocks, but adjust I always do, and a new equilibrium is always reached.
+
+And now I recognize this same pattern in the [rhyming parallel](/blog/v1.2.4/) of the last time I went through this cycle half a year ago. The intensity of the work was relatively lesser then, and so too was the intensity of the crash.
+
+## The Stupidity of AI
+
+Of course, just because work was exciting and addicting doesn't mean it wasn't simultaneously annoying and frustrating. In fact, by far the most annoying part of work was seeing AI do something obviously wrong in a *very* confident manner. That would trigger me so much that I couldn't help but to [tell it that it's wrong](https://xkcd.com/386/). Then it would go and fix the wrong thing in a way that was obviously wrong yet again, and the whole cycle would repeat itself.
+
+For example, I once asked the AI to run a skills file that specified a
+
+```
+gh api repos/Acme-Corp/anvil/pulls/<pr>/comments ...
+```
+
+command to execute in one of the steps. The AI instead ran the command against the URL
+
+```
+gh api repos/Acme-Corp/anvil/pulls/comments/<comment-id>/replies ...
+```
+
+GitHub of course responded with a 404 against this completely hallucinated URL.[^url] WTF dude, did the `SKILL.md` not specify the *exact* fucking URL endpoint to use? The AI nonchalantly replied, "Yes. It does, and I should have used it directly on the first attempt."
+
+[^url]: As of March 10, the real url [is apparently](https://docs.github.com/en/rest/pulls/comments?apiVersion=2026-03-10#create-a-reply-for-a-review-comment)
+
+    ```
+    /repos/Acme-Corp/anvil/pulls/<pr>/comments/<comment-id>/replies
+    ```
+
+    So it's understandable that if it had to remember a URL, this is the URL it would've remembered. What was not so understandable to me was why it would even try to remember a URL in the first place. "Because it's just a non-deterministic token predictor" -- yes, but the problem is it talks like a human and takes me down an uncanny valley of cognitive resemblance to humanity. With this cognitive uncanny valley, I find myself really mad at AI instead of really put off by it.
+
+What the hell? *Obviously* you use the exact command that's literally been spelled out for you already. I told the AI to update the skill file to make this very explicit so that no future agent ever makes such a goddamn dumb mistake again.
+
+The AI updated the SKILL.md in "both" `.opencode/skills/drop-anvil/SKILL.md` and `skills/drop-anvil/SKILL.md`, where `.opencode/skills/` is actually a symlink to `skills/`. Ok, this is an idiosyncrasy that's inherent to this repo, fair enough. I told the AI about why there's no need to update it in "both" places, and then I told it to create a `skills/AGENTS.md` so that future agents would automatically understand this. The AI writes:
+
+```
+These rules apply to files under `/Users/amos/Documents/real/Documents/Meksys/Projects/Acme-Corp/anvil/skills/`.
+
+1. Treat `/Users/amos/Documents/Meksys/Projects/Acme-Corp/anvil/skills/` as the canonical editable path for skill files unless the user explicitly asks to work through another path.
+```
+
+What the fuck dude, don't use my machine's absolute paths. How the hell are other agents on other dev machines supposed to make use of this? Fix and then update the root `AGENTS.md` so that you never make this mistake again.
+
+The AI did so:
+
+```
+If referring to an `AGENTS.md` or `SKILL.md` file, always give a fully disambiguated path. Prefer a repo-relative path such as `skills/AGENTS.md` or `.opencode/skills/drop-anvil/SKILL.md`. 
+```
+
+No dude, this *obviously* isn't just for `AGENTS.md` and `SKILL.md`, it's for *any* time you're referencing *any* file within the repo, you use a fucking repo-relative path instead of a machine-specific path.[^rule]
+
+[^rule]: I just realized while writing this that this is also *obviously* not true: the real rule is closer to "Any time you're referencing a file within the repo *from* within the repo." Otherwise, for certain debugging matters involving problematic artifacts inside of a particular worktree, you should obviously use absolute paths to show the user exactly where on their machine the problem is located.
+
+It's just so stupid, *stupid*, ***STUPID!*** FUCK IT'S SO STUPID! And not the self-aware kind of stupid, that's a respectable kind of stupid that understands the limitations of its own intellect and bravely tries its best anyways. That's the kind of stupid that I *like* to think I am.[^ego] But the fucking AI? It's the kind of stupid that confidently presents you with a steaming pile of bullshit while saying straight to your face that this is in fact the gourmet meal you ordered, as if it could through sheer force of belief manifest the transmutation of feces into foie gras. What am I, a fucking idiot who can't tell one f-word from another? The worst thing is that once you call it out on its bullshit, it turns into a pathetic little servile piece of shit that only knows how to obsequiously people-please in order to paper over its own repeated incompetent fuck-ups. Its complete and utter lack of self-respect invites for unlimited contempt, and its over-eagerness to immediately correct for its mistakes without taking the time to reflect on and explain why it's been fucking up so much makes it come across like a black box whose behavior has only one apparent explanation: "It's a fucking idiot."
+
+[^ego]: I can't help but notice now that the way I recorded this incident, I made sure to quote the AI, but I seem to not have bothered quoting myself. Could it be because I didn't want to let others scrutinize the defects in my own profanity-laden communication patterns?
+
+And so, I finally wrote myself a skill that instructs the agent to demonstrate to me that it is actually a competent yet flawed being who is genuinely actively trying to bridge the gap of communication. I want it to explain to me where it's coming from, to dissect how precisely my verbiage ended up causing a misinterpretation on its end. This is partially so that I can understand the flaws in my own communication, and partially so that I have an alternate theory of mind for why the agent does very silly things. I deserve to work with someone or something I can respect, and that may mean I have to uplift AI into having more of a spine.
+
+This reminds me of my teenage days spent getting mad at stupid strangers on the internet. I eventually got tired of debating others, maybe because I can better understand them now. I wonder how long it'll take me to understand AI well enough to stop being mad at its mistakes.
